@@ -36,3 +36,39 @@
     transform: rotate(360deg);
   }
 }
+
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-layout {
+  display: flex;
+  flex: 1; 
+}
+
+.sidebar {
+  width: 100%;
+  position: fixed;
+  z-index: 10;
+  margin-top: 60px;
+}
+
+.content {
+  flex: 1; 
+  padding: 20px;
+  width: 100dvw;
+  margin-left: 25%;
+  margin-top: 60px;
+  z-index: 20;
+}
+
+.header-container {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; 
+}

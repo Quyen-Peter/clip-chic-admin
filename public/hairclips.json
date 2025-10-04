@@ -1,0 +1,68 @@
+{
+  "hairClips": [
+    {
+      "id": 1,
+      "name": "Flutterbelle",
+      "description": "Clip decorated with flower and butterfly charms",
+      "price": 55000,
+      "currency": "vnd",
+      "stock": 20,
+      "image": "https://watermark.lovepik.com/photo/40243/3195.jpg_wh1200.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Cherry Cream",
+      "description": "Light blue clip decorated with cream and red cherry charms",
+      "price": 55000,
+      "currency": "vnd",
+      "stock": 20,
+      "image": "https://watermark.lovepik.com/photo/40243/3195.jpg_wh1200.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Flutterbelle",
+      "description": "Clip decorated with flower and butterfly charms",
+      "price": 55000,
+      "currency": "vnd",
+      "stock": 20,
+      "image": "https://watermark.lovepik.com/photo/40243/3195.jpg_wh1200.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Flutterbelle",
+      "description": "Clip decorated with flower and butterfly charms Clip decorated with flower and butterfly charms Clip decorated with flower and butterfly charms Clip decorated with flower and butterfly charms",
+      "price": 55000,
+      "currency": "vnd",
+      "stock": 20,
+      "image": "https://watermark.lovepik.com/photo/40243/3195.jpg_wh1200.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Flutterbelle",
+      "description": "Clip decorated with flower and butterfly charms",
+      "price": 55000,
+      "currency": "vnd",
+      "stock": 20,
+      "image": "https://watermark.lovepik.com/photo/40243/3195.jpg_wh1200.jpg"
+    },
+    {
+      "id": 6,
+      "name": "Flutterbelle",
+      "description": "Clip decorated with flower and butterfly charms",
+      "price": 55000,
+      "currency": "vnd",
+      "stock": 20,
+      "image": "https://watermark.lovepik.com/photo/40243/3195.jpg_wh1200.jpg"
+    },
+    {
+      "id": 7,
+      "name": "Flutterbelle",
+      "description": "Clip decorated with flower and butterfly charms",
+      "price": 55000,
+      "currency": "vnd",
+      "stock": 20,
+      "image": "https://watermark.lovepik.com/photo/40243/3195.jpg_wh1200.jpg"
+    }
+  ]
+}
+

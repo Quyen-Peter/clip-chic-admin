@@ -1,0 +1,46 @@
+{
+    "products": [
+      { "id": "P001", "name": "Flutterbelle Hair Clip", "category": "Hair Clips", "price": 85000, "image": "flutterbelle.png", "salesCount": 120 },
+      { "id": "P002", "name": "Summer Box", "category": "Blind Box", "price": 150000, "image": "summerbox.png", "salesCount": 95 },
+      { "id": "P003", "name": "Back To School Box", "category": "Blind Box", "price": 150000, "image": "backtoschool.png", "salesCount": 80 },
+      { "id": "P004", "name": "Lovely Pink Clip", "category": "Hair Clips", "price": 75000, "image": "pinkclip.png", "salesCount": 60 },
+      { "id": "P005", "name": "Rainbow Box", "category": "Blind Box", "price": 180000, "image": "rainbow.png", "salesCount": 50 },
+      { "id": "P006", "name": "Classic Black Clip", "category": "Hair Clips", "price": 70000, "image": "blackclip.png", "salesCount": 45 },
+      { "id": "P007", "name": "Golden Shine Clip", "category": "Hair Clips", "price": 95000, "image": "goldclip.png", "salesCount": 40 },
+      { "id": "P008", "name": "Surprise Blind Box", "category": "Blind Box", "price": 200000, "image": "surprise.png", "salesCount": 35 },
+      { "id": "P009", "name": "Kids School Pack", "category": "Bundles", "price": 250000, "image": "schoolpack.png", "salesCount": 55 },
+      { "id": "P010", "name": "Premium Diamond Clip", "category": "Hair Clips", "price": 120000, "image": "diamondclip.png", "salesCount": 25 }
+    ],
+  
+    "orders": [
+      { "id": "HC96459761", "customer": "Nha Ngoc Nguyen", "date": "2025-07-12T09:30:00", "total": 405000, "products": [{ "productId": "P001", "quantity": 2 }, { "productId": "P002", "quantity": 1 }] },
+      { "id": "HC57423885", "customer": "Hai Anh Vo", "date": "2025-07-11T15:00:00", "total": 100000, "products": [{ "productId": "P004", "quantity": 1 }] },
+      { "id": "HC517632541", "customer": "Tan Dat Tran", "date": "2025-07-11T07:52:00", "total": 405000, "products": [{ "productId": "P001", "quantity": 3 }, { "productId": "P003", "quantity": 1 }] },
+      { "id": "HC932178243", "customer": "Quyen Trinh", "date": "2024-12-30T10:11:00", "total": 55000, "products": [{ "productId": "P004", "quantity": 1 }] },
+      { "id": "HC752103548", "customer": "Phong Dau", "date": "2024-12-18T07:52:00", "total": 205000, "products": [{ "productId": "P005", "quantity": 1 }, { "productId": "P001", "quantity": 1 }] },
+      { "id": "HC845612378", "customer": "Minh Hoang", "date": "2025-06-22T12:45:00", "total": 295000, "products": [{ "productId": "P006", "quantity": 1 }, { "productId": "P002", "quantity": 1 }] },
+      { "id": "HC746281945", "customer": "Lan Anh", "date": "2025-06-15T09:20:00", "total": 370000, "products": [{ "productId": "P009", "quantity": 1 }, { "productId": "P001", "quantity": 1 }] },
+      { "id": "HC653298741", "customer": "Thanh Binh", "date": "2025-05-30T17:10:00", "total": 480000, "products": [{ "productId": "P010", "quantity": 2 }, { "productId": "P004", "quantity": 1 }] },
+      { "id": "HC598741632", "customer": "Bao Chau", "date": "2025-05-20T08:05:00", "total": 200000, "products": [{ "productId": "P008", "quantity": 1 }] },
+      { "id": "HC487512369", "customer": "Quoc Huy", "date": "2025-04-12T11:40:00", "total": 150000, "products": [{ "productId": "P002", "quantity": 1 }] },
+      { "id": "HC389741256", "customer": "Thu Trang", "date": "2025-04-01T14:00:00", "total": 340000, "products": [{ "productId": "P009", "quantity": 1 }, { "productId": "P003", "quantity": 1 }] },
+      { "id": "HC278945631", "customer": "Hoang Nam", "date": "2025-03-25T16:25:00", "total": 285000, "products": [{ "productId": "P007", "quantity": 2 }, { "productId": "P001", "quantity": 1 }] },
+      { "id": "HC178945632", "customer": "Thanh Thao", "date": "2025-03-10T10:50:00", "total": 120000, "products": [{ "productId": "P010", "quantity": 1 }] }
+    ],
+  
+    "customers": [
+      { "id": "C001", "name": "Nha Ngoc Nguyen", "orders": 5 },
+      { "id": "C002", "name": "Hai Anh Vo", "orders": 2 },
+      { "id": "C003", "name": "Tan Dat Tran", "orders": 3 },
+      { "id": "C004", "name": "Quyen Trinh", "orders": 1 },
+      { "id": "C005", "name": "Phong Dau", "orders": 1 },
+      { "id": "C006", "name": "Minh Hoang", "orders": 4 },
+      { "id": "C007", "name": "Lan Anh", "orders": 2 },
+      { "id": "C008", "name": "Thanh Binh", "orders": 3 },
+      { "id": "C009", "name": "Bao Chau", "orders": 2 },
+      { "id": "C010", "name": "Thu Trang", "orders": 1 },
+      { "id": "C011", "name": "Hoang Nam", "orders": 2 },
+      { "id": "C012", "name": "Thanh Thao", "orders": 1 }
+    ]
+  }
+  
