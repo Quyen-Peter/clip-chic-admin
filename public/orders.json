@@ -1,0 +1,39 @@
+{
+  "orders": [
+    {
+      "id": "HC96459761",
+      "customer": "Nha Ngoc Nguyen",
+      "date": "July 11, 2025 07:52",
+      "total": "405.000 vnd",
+      "products": 5
+    },
+    {
+      "id": "HC57423885",
+      "customer": "Hai Anh Vo",
+      "date": "July 11, 2025 07:52",
+      "total": "100.000 vnd",
+      "products": 2
+    },
+    {
+      "id": "HC517632541",
+      "customer": "Tan Dat Tran",
+      "date": "July 11, 2025 07:52",
+      "total": "405.000 vnd",
+      "products": 5
+    },
+    {
+      "id": "HC932178243",
+      "customer": "Quyen Trinh",
+      "date": "Dec 30, 2024 10:11",
+      "total": "55.000 vnd",
+      "products": 1
+    },
+    {
+      "id": "HC752103548",
+      "customer": "Phong Dau",
+      "date": "Dec 18, 2024 07:52",
+      "total": "205.000 vnd",
+      "products": 3
+    }
+  ]
+}
