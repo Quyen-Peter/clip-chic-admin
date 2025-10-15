@@ -1,0 +1,31 @@
+{
+  "orderId": 123,
+  "status": "ToShip",
+  "products": [
+    {
+      "id": 1,
+      "title": "Áo thun trắng",
+      "name": "Áo thun trắng",
+      "qty": 2,
+      "price": 150000,
+      "image": "https://digiart.academy/upload/images/tao-hinh-nhan-vat-4.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Áo thun trắng",
+      "name": "Quần jeans",
+      "qty": 1,
+      "price": 350000,
+      "image": "https://digiart.academy/upload/images/tao-hinh-nhan-vat-4.jpg"
+    },
+     {
+      "id": 3,
+      "title": "Áo thun trắng",
+      "name": "Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans Quần jeans",
+      "qty": 1,
+      "price": 350000,
+      "image": "https://digiart.academy/upload/images/tao-hinh-nhan-vat-4.jpg"
+    }
+  ]
+}
+

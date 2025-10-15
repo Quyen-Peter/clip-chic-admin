@@ -7,6 +7,7 @@ import Shipping from "../screen/Shipping";
 import User from "../screen/User";
 import Voucher from "../screen/Voucher";
 import ProductDetail from "../screen/ProductDetail";
+import OrderDetail from "../screen/OrderDetail";
 
 const AppRouter = () => {
     return (
@@ -20,6 +21,7 @@ const AppRouter = () => {
             <Route path="/User" element={<User />} />
             <Route path="/Shipping" element={<Shipping />} />
             <Route path="/ProductDetail/:id" element={<ProductDetail />} />
+            <Route path="/OrderDetail/:id" element={<OrderDetail />} />
         </Routes>
     )
 }

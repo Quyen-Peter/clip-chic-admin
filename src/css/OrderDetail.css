@@ -1,0 +1,134 @@
+.order-detail-container {
+  height: 100vh;
+  margin-bottom: 60%;
+}
+
+.order-id {
+  font-weight: bold;
+  margin-bottom: 50px;
+  color: #ff8fb4;
+}
+
+
+.order-detail-content {
+  margin-top: 5%;
+}
+
+.product-list-order, .shipping-address-title, .payment-method{
+  color: #ff8fb4;
+  font-weight: bold;
+}
+
+.product-items-order  {
+  margin-top: 3%;
+}
+
+.product-item-order {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border: 2px solid #ff8fb4;
+  border-radius: 10px;
+  margin-right: 11%;
+  padding-left: 10px;
+}
+
+.product-image-order {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  margin-right: 20px;
+  border-radius: 10px;
+  background-color: #ff8fb4;
+}
+
+.product-info-order {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-name-title{
+    margin-bottom: 0px;
+}
+
+.product-title {
+  color: #173da2;
+  font-size: 17px;
+  font-weight: bold;
+  font-family: Arial;
+}
+
+.product-name {
+  color: #173da2;
+  width: 400px;
+  font-family: Arial;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #173da2;
+  font-size: 13px;
+}
+.product-quantity,
+.product-price {
+  color: #173da2;
+  font-weight: bold;
+  font-family: Arial;
+}
+.product-price {
+  margin-right: 5%;
+}
+
+.shipping-address, .payment-method-container{
+    margin-top: 7%;
+}
+
+.address-info-border, .total-info-border{
+    border: 2px solid #ff8fb4;
+    border-radius: 15px;
+    margin-right: 11%;
+    padding-left: 20px;
+}
+
+.name-phone, .address-detail{
+    display: flex;
+}
+
+.name-phone p, .address-detail p{
+    color: #173da2;
+    font-family: Arial;
+}
+
+.content-name-info{
+    margin-left: 5px;
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.content-address-info{
+    margin-left: 5px;
+}
+
+.subtotal, .shipping-charge, .total{
+    display: flex;
+    justify-content: space-between;
+    padding-right: 100px;
+}
+
+.subtotal p, .shipping-charge p, .total p{
+    color: #173da2;
+    font-family: Arial;
+}
+
+.total p{
+    font-weight: bold;
+}
+
+.line-order-detail-payment{
+  border: #ff8fb4 solid 1px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+} 

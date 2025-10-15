@@ -1,0 +1,53 @@
+.steps-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-left: -111px;
+
+}
+
+.step-wrapper {
+  text-align: center;
+  position: relative;
+  flex: 1;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ccc; 
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-weight: bold;
+  z-index: 100;
+  position: relative;
+}
+
+.circle.active {
+  background: #0d47a1; 
+}
+
+.line {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  height: 3px;
+  width: 100%;
+  background: #ccc; 
+  z-index: 0;
+}
+
+.line.active {
+  background: #0d47a1; 
+}
+
+.step-label {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #0d47a1;
+}

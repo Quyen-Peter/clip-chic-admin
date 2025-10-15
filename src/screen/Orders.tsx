@@ -50,7 +50,7 @@ const Orders: React.FC = () => {
                 {order.products > 1 ? "Products" : "Product"})
               </td>
               <td className="action">
-                <a href={`/orders/${order.id}`} className="view-details">
+                <a href={`/OrderDetail/${order.id}`} className="view-details">
                   View Details →
                 </a>
               </td>
