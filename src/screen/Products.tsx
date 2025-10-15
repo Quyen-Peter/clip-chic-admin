@@ -23,7 +23,7 @@ const Products = () => {
       <div className="header">
         <div className="header-flex">
           <h2>KẸP TÓC CÓ SẴN</h2>
-          <button className="add-more-bnt">
+          <button className="add-more-bnt" onClick={() => navigate("/CreateProduct")}>
             <h2>Thêm kẹp tóc</h2>
           </button>
         </div>

@@ -8,6 +8,7 @@ import User from "../screen/User";
 import Voucher from "../screen/Voucher";
 import ProductDetail from "../screen/ProductDetail";
 import OrderDetail from "../screen/OrderDetail";
+import CreateProduct from "../screen/CreateProduct";
 
 const AppRouter = () => {
     return (
@@ -22,6 +23,7 @@ const AppRouter = () => {
             <Route path="/Shipping" element={<Shipping />} />
             <Route path="/ProductDetail/:id" element={<ProductDetail />} />
             <Route path="/OrderDetail/:id" element={<OrderDetail />} />
+            <Route path="/CreateProduct" element={<CreateProduct />} />
         </Routes>
     )
 }
