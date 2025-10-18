@@ -3,61 +3,96 @@ import "../css/Product.css";
 import edit from "../asesst/pencil.png";
 import trast from "../asesst/bin.png";
 import { useNavigate } from "react-router-dom";
-import plus from "../asesst/plus.png";
+import { fetchProducts, ProductListItem } from "../services/productService";
 
 const Products = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = React.useState<any[]>([]);
+  const [products, setProducts] = React.useState<ProductListItem[]>([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    fetch("/hairclips.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data.hairClips);
-      })
-      .catch((err) => console.error("Fetch error:", err));
+    let isMounted = true;
+
+    const loadProducts = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const data = await fetchProducts();
+        if (isMounted) {
+          setProducts(data);
+        }
+      } catch (err) {
+        if (isMounted) {
+          const message =
+            err instanceof Error ? err.message : "Unable to load products.";
+          setError(message);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadProducts();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
     <div className="container">
       <div className="header">
         <div className="header-flex">
-          <h2>KẸP TÓC CÓ SẴN</h2>
-          <button className="add-more-bnt" onClick={() => navigate("/CreateProduct")}>
-            <h2>Thêm kẹp tóc</h2>
+          <h2>Product Catalog</h2>
+          <button
+            className="add-more-bnt"
+            onClick={() => navigate("/CreateProduct")}
+          >
+            <h2>Add product</h2>
           </button>
         </div>
 
         <div className="header-product">
-          <p>Danh sách các kẹp tóc có sẵn trong hệ thống</p>
+          <p>Products currently available in the system</p>
           <p className="header-product-show">
-            Hiển thị 1–7 trong số {products.length} sản phẩm{" "}
+            Showing {products.length} products
           </p>
         </div>
       </div>
 
       <div className="product-list">
         <div className="product-header">
-          <span className="product-header-image">Ảnh</span>
-          <span className="product-header-name">Tên sản phẩm</span>
-          <span className="product-header-price">Giá</span>
-          <span className="product-header-quantity">Số lượng</span>
-          <span className="product-header-action">Hoạt động</span>
+          <span className="product-header-image">Image</span>
+          <span className="product-header-name">Product</span>
+          <span className="product-header-price">Price</span>
+          <span className="product-header-quantity">Stock</span>
+          <span className="product-header-action">Actions</span>
         </div>
+        {isLoading && (
+          <div className="product-feedback">Loading products...</div>
+        )}
+        {error && <div className="product-feedback error">{error}</div>}
         {products.map((product) => (
           <div className="product-item" key={product.id}>
             <span className="product-image">
-              <img src={product.image} alt={product.name} />
+              {product.image ? (
+                <img src={product.image} alt={product.title} />
+              ) : (
+                <span className="product-no-image">No image</span>
+              )}
             </span>
             <span className="product-name">
-              {product.name}
+              {product.title}
               <span className="product-description">
                 {" "}
                 {product.description}
               </span>
             </span>
             <span className="product-price">
-              {product.price.toLocaleString()} VND
+              {product.price.toLocaleString("vi-VN")} VND
             </span>
             <span className="product-quantity">{product.stock}</span>
             <span className="product-action">
@@ -65,11 +100,11 @@ const Products = () => {
                 className="edit-button"
                 onClick={() => navigate(`/ProductDetail/${product.id}`)}
               >
-                <img src={edit} />
+                <img src={edit} alt="Edit" />
               </button>
 
               <button className="delete-button">
-                <img src={trast} />
+                <img src={trast} alt="Delete" />
               </button>
             </span>
           </div>
@@ -78,35 +113,39 @@ const Products = () => {
 
       <div className="header">
         <div className="header-flex">
-          <h2>Bộ sưu tập Blindbox</h2>
+          <h2>Blindbox Sets</h2>
           <button className="add-more-bnt">
-            <h2>Thêm bộ sưu tập Blindbox</h2>
+            <h2>Add blindbox</h2>
           </button>
         </div>
         <div className="header-product">
-          <p>Danh sách các Bộ sưu tập Blindbox trong hệ thống</p>
+          <p>Blindbox items currently in the catalogue</p>
           <p className="header-product-show">
-            Hiển thị 1–7 trong số {products.length} sản phẩm{" "}
+            Showing {products.length} products
           </p>
         </div>
       </div>
 
       <div className="product-list">
         <div className="product-header">
-          <span className="product-header-image">Ảnh</span>
-          <span className="product-header-name">Tên sản phẩm</span>
-          <span className="product-header-price">Giá</span>
-          <span className="product-header-quantity">Số lượng</span>
-          <span className="product-header-action">Hoạt động</span>
+          <span className="product-header-image">Image</span>
+          <span className="product-header-name">Product</span>
+          <span className="product-header-price">Price</span>
+          <span className="product-header-quantity">Stock</span>
+          <span className="product-header-action">Actions</span>
         </div>
         {products.map((product) => (
-          <div className="product-item" key={product.id}>
+          <div className="product-item" key={`${product.id}-blindbox`}>
             <span className="product-image">
-              <img src={product.image} alt={product.name} />
+              {product.image ? (
+                <img src={product.image} alt={product.title} />
+              ) : (
+                <span className="product-no-image">No image</span>
+              )}
             </span>
-            <span className="product-name-blindbox">{product.name}</span>
+            <span className="product-name-blindbox">{product.title}</span>
             <span className="product-price">
-              {product.price.toLocaleString()} VND
+              {product.price.toLocaleString("vi-VN")} VND
             </span>
             <span className="product-quantity">{product.stock}</span>
             <span className="product-action">
@@ -114,11 +153,11 @@ const Products = () => {
                 className="edit-button"
                 onClick={() => navigate(`/ProductDetail/${product.id}`)}
               >
-                <img src={edit} />
+                <img src={edit} alt="Edit" />
               </button>
 
               <button className="delete-button">
-                <img src={trast} />
+                <img src={trast} alt="Delete" />
               </button>
             </span>
           </div>

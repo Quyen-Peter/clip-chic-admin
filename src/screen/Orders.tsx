@@ -1,31 +1,66 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../css/Order.css";
-
-interface Order {
-  id: string;
-  customer: string;
-  date: string;
-  total: string;
-  products: number;
-}
+import { fetchOrders, OrderListItem } from "../services/orderService";
 
 const Orders: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<OrderListItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/orders.json")
-      .then((res) => res.json())
-      .then((data) => setOrders(data.orders))
-      .catch((err) => console.error(err));
+    let isMounted = true;
+
+    const loadOrders = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const data = await fetchOrders();
+        if (isMounted) {
+          setOrders(data);
+        }
+      } catch (err) {
+        if (isMounted) {
+          const message =
+            err instanceof Error ? err.message : "Unable to load orders.";
+          setError(message);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadOrders();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  const headingSummary = useMemo(() => {
+    if (orders.length === 0) return "No orders available";
+    return `Showing 1-${Math.min(10, orders.length)} of ${orders.length} orders`;
+  }, [orders]);
+
+  const formatDate = (value: string) => {
+    if (!value) return "N/A";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+      ? "N/A"
+      : date.toLocaleDateString("vi-VN");
+  };
+
+  const formatTotal = (value: number) =>
+    `${value.toLocaleString("vi-VN")} VND`;
 
   return (
     <div className="order-container">
       <div className="header-order">
-        <h2>Quản lý đơn đặt hàng</h2>
+        <h2>Order management</h2>
         <div className="header-order-flex">
-          <p>Danh sách đơn hàng trong hệ thống</p>
-          <p>Showing 1–10 of {orders.length} orders</p>
+          <p>Orders currently recorded in the system</p>
+          <p>{headingSummary}</p>
         </div>
       </div>
 
@@ -33,32 +68,45 @@ const Orders: React.FC = () => {
         <thead>
           <tr>
             <th>ORDER ID</th>
-            <th>CUSTOMERS</th>
+            <th>CUSTOMER</th>
             <th>DATE</th>
             <th>TOTAL</th>
             <th>ACTION</th>
           </tr>
         </thead>
         <tbody>
+          {isLoading && (
+            <tr>
+              <td colSpan={5} className="order-feedback">
+                Loading orders...
+              </td>
+            </tr>
+          )}
+          {error && (
+            <tr>
+              <td colSpan={5} className="order-feedback error">
+                {error}
+              </td>
+            </tr>
+          )}
           {orders.map((order) => (
             <tr key={order.id}>
               <td className="order-id">#{order.id}</td>
               <td>{order.customer}</td>
-              <td>{order.date}</td>
+              <td>{formatDate(order.date)}</td>
               <td>
-                {order.total} ({order.products}{" "}
+                {formatTotal(order.total)} ({order.products}{" "}
                 {order.products > 1 ? "Products" : "Product"})
               </td>
               <td className="action">
                 <a href={`/OrderDetail/${order.id}`} className="view-details">
-                  View Details →
+                  View Details {"->"}
                 </a>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
     </div>
   );
 };

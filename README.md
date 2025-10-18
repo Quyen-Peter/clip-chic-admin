@@ -44,3 +44,13 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Backend API configuration
+
+The admin UI now calls the ClipNchic backend instead of using mocked JSON files. Set `REACT_APP_API_BASE_URL` before starting the app so requests are routed to the correct server. For local development create a `.env.local` file in the project root with:
+
+```
+REACT_APP_API_BASE_URL=http://localhost:5222
+```
+
+If the variable is not provided the app falls back to `http://localhost:5222`.
