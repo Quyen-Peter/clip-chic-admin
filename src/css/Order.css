@@ -74,3 +74,14 @@
 .order-table th:last-child {
   border-top-right-radius: 10px;
 }
+
+.order-feedback {
+  padding: 16px;
+  text-align: center;
+  color: #173da2;
+  font-weight: 500;
+}
+
+.order-feedback.error {
+  color: #d9534f;
+}

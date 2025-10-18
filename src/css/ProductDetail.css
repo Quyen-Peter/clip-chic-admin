@@ -200,3 +200,29 @@ textarea {
   outline: none !important;
   box-shadow: none !important;
 }
+
+.submit-feedback {
+  grid-column: 1 / -1;
+  margin-top: 12px;
+  font-weight: 500;
+  color: #173da2;
+}
+
+.submit-feedback.error {
+  color: #d9534f;
+}
+
+.submit-feedback.success {
+  color: #1c9c58;
+}
+
+.field-message {
+  grid-column: 1 / -1;
+  color: #173da2;
+  font-size: 14px;
+  padding: 10px 0;
+}
+
+.field-message.error {
+  color: #d9534f;
+}

@@ -1,280 +1,428 @@
-import { useParams } from "react-router-dom";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/ProductDetail.css";
-import React, { useEffect, useState } from "react";
 import editIcon from "../asesst/pencil.png";
 import trashIcon from "../asesst/bin.png";
+import { createProduct } from "../services/productService";
+import {
+  fetchCollections,
+  CollectionSummary,
+} from "../services/collectionService";
 
-const CreateProduct = () =>{
-   const { id } = useParams();
-  const navigator = useNavigate();
-  const [image1, setImage1] = React.useState<string | undefined>(undefined);
-  const [image2, setImage2] = React.useState<string | undefined>(undefined);
-  const [image3, setImage3] = React.useState<string | undefined>(undefined);
-  const [image4, setImage4] = React.useState<string | undefined>(undefined);
-  const [image5, setImage5] = React.useState<string | undefined>(undefined);
-  const [colors, setColors] = useState<{ id: number; name: string }[]>([]);
-  const [selected, setSelected] = useState("");
+type FeedbackState =
+  | { type: "success" | "error"; message: string }
+  | null;
 
-  useEffect(() => {
-    const data = [
-      { id: 1, name: "Vàng" },
-      { id: 2, name: "Đỏ" },
-      { id: 3, name: "trắng" },
-    ];
-    setColors(data);
+type ImageSlot = {
+  file: File | null;
+  preview: string | null;
+};
+
+const IMAGE_SLOT_COUNT = 5;
+
+const createInitialImageSlots = (): ImageSlot[] =>
+  Array.from({ length: IMAGE_SLOT_COUNT }, () => ({ file: null, preview: null }));
+
+const getInitialFormState = (defaultCollectId?: number) => ({
+  collectId: defaultCollectId ? String(defaultCollectId) : "",
+  title: "",
+  descript: "",
+  price: "",
+  stock: 0,
+  createDate: new Date().toISOString().slice(0, 10),
+  status: "active",
+});
+
+const CreateProduct = () => {
+  const navigate = useNavigate();
+  const previewUrlsRef = React.useRef<string[]>([]);
+
+  const [images, setImages] =
+    React.useState<ImageSlot[]>(createInitialImageSlots);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [feedback, setFeedback] = React.useState<FeedbackState>(null);
+  const [collections, setCollections] = React.useState<CollectionSummary[]>([]);
+  const [isLoadingCollections, setIsLoadingCollections] = React.useState(false);
+  const [collectionsError, setCollectionsError] = React.useState<string | null>(
+    null
+  );
+  const [form, setForm] = React.useState(() => getInitialFormState());
+
+  const registerPreview = React.useCallback((url: string) => {
+    previewUrlsRef.current.push(url);
   }, []);
 
-  const handleChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImage1(URL.createObjectURL(file));
+  const revokePreview = React.useCallback((url: string | null) => {
+    if (!url) return;
+    URL.revokeObjectURL(url);
+    previewUrlsRef.current = previewUrlsRef.current.filter((value) => value !== url);
+  }, []);
+
+  React.useEffect(() => {
+    return () => {
+      previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
+  React.useEffect(() => {
+    let isMounted = true;
+
+    const loadCollections = async () => {
+      setIsLoadingCollections(true);
+      setCollectionsError(null);
+      try {
+        const data = await fetchCollections();
+        if (!isMounted) return;
+        setCollections(data);
+        if (data.length > 0) {
+          setForm((prev) =>
+            prev.collectId
+              ? prev
+              : { ...prev, collectId: String(data[0].id) }
+          );
+        }
+      } catch (err) {
+        if (isMounted) {
+          const message =
+            err instanceof Error ? err.message : "Unable to load collections.";
+          setCollectionsError(message);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingCollections(false);
+        }
+      }
+    };
+
+    loadCollections();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleFileChange =
+    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0] ?? null;
+
+      setImages((prev) => {
+        const next = [...prev];
+        const previous = next[index];
+        if (previous?.preview) {
+          revokePreview(previous.preview);
+        }
+
+        if (file) {
+          const preview = URL.createObjectURL(file);
+          registerPreview(preview);
+          next[index] = { file, preview };
+        } else {
+          next[index] = { file: null, preview: null };
+        }
+
+        return next;
+      });
+
+      // Allow selecting the same file again
+      event.target.value = "";
+    };
+
+  const handleRemoveImage = (index: number) => () => {
+    setImages((prev) => {
+      const next = [...prev];
+      const previous = next[index];
+      if (previous?.preview) {
+        revokePreview(previous.preview);
+      }
+      next[index] = { file: null, preview: null };
+      return next;
+    });
+  };
+
+  const resetImages = React.useCallback(() => {
+    previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    previewUrlsRef.current = [];
+    setImages(createInitialImageSlots());
+  }, []);
+
+  const handleInputChange = (
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = event.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const adjustStock = (delta: number) => {
+    setForm((prev) => ({
+      ...prev,
+      stock: Math.max(0, prev.stock + delta),
+    }));
+  };
+
+  const handleStockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value);
+    setForm((prev) => ({
+      ...prev,
+      stock: Number.isNaN(value) ? 0 : Math.max(0, value),
+    }));
+  };
+
+  const resetForm = React.useCallback(() => {
+    setForm(() => getInitialFormState(collections[0]?.id));
+    resetImages();
+  }, [collections, resetImages]);
+
+  const renderImageSlot = (index: number) => {
+    const slot = images[index];
+
+    return (
+      <div className="image-box" key={`image-slot-${index}`}>
+        {!slot.preview && <span className="placeholder">No image</span>}
+
+        {slot.preview && (
+          <img src={slot.preview} alt={`preview-${index + 1}`} className="preview-img" />
+        )}
+
+        <div className="overlay">
+          <label className="btn-icon">
+            <img src={editIcon} alt="edit" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange(index)}
+              hidden
+            />
+          </label>
+          <button
+            className="btn-icon"
+            type="button"
+            onClick={handleRemoveImage(index)}
+          >
+            <img src={trashIcon} alt="delete" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFeedback(null);
+
+    if (!form.collectId.trim()) {
+      setFeedback({
+        type: "error",
+        message: "Please choose a collection.",
+      });
+      return;
     }
-  };
 
-  const handleRemove1 = () => {
-    setImage1("");
-  };
-
-  const handleChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImage2(URL.createObjectURL(file));
+    const collectIdValue = Number(form.collectId);
+    if (Number.isNaN(collectIdValue) || collectIdValue <= 0) {
+      setFeedback({
+        type: "error",
+        message: "Collection selection is invalid.",
+      });
+      return;
     }
-  };
 
-  const handleRemove2 = () => {
-    setImage2("");
-  };
-
-  const handleChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImage3(URL.createObjectURL(file));
+    if (!form.title.trim()) {
+      setFeedback({ type: "error", message: "Please enter a product title." });
+      return;
     }
-  };
 
-  const handleRemove3 = () => {
-    setImage3("");
-  };
-
-  const handleChange4 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImage4(URL.createObjectURL(file));
+    const priceValue = form.price ? Number(form.price) : null;
+    if (form.price && Number.isNaN(priceValue)) {
+      setFeedback({ type: "error", message: "Price must be a valid number." });
+      return;
     }
-  };
 
-  const handleRemove4 = () => {
-    setImage4("");
-  };
-
-  const handleChange5 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImage5(URL.createObjectURL(file));
+    let createDateIso: string | undefined;
+    if (form.createDate) {
+      const parsed = new Date(form.createDate);
+      if (Number.isNaN(parsed.getTime())) {
+        setFeedback({ type: "error", message: "Create date is invalid." });
+        return;
+      }
+      createDateIso = parsed.toISOString();
     }
-  };
 
-  const handleRemove5 = () => {
-    setImage5("");
+    const selectedImages = images
+      .filter((slot) => slot.file)
+      .map((slot) => slot.file as File);
+
+    if (selectedImages.length === 0) {
+      setFeedback({ type: "error", message: "Please upload at least one product image." });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const product = await createProduct({
+        collectId: collectIdValue,
+        title: form.title.trim(),
+        descript: form.descript.trim(),
+        price: priceValue,
+        stock: form.stock,
+        createDate: createDateIso,
+        status: form.status,
+        images: selectedImages,
+      });
+
+      setFeedback({
+        type: "success",
+        message: `Product "${product.title}" created successfully.`,
+      });
+      resetForm();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to create product.";
+      setFeedback({ type: "error", message });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="container-product-detail">
+    <form className="container-product-detail" onSubmit={handleSubmit}>
       <div className="bnt-container">
-        <button onClick={() => navigator("/Products")} className="bnt-back">Trở lại</button>
+        <button
+          type="button"
+          onClick={() => navigate("/Products")}
+          className="bnt-back"
+        >
+          Back
+        </button>
         <div className="bnt-edit-delete">
-          <button className="edit-bnt">Xác nhận</button>
+          <button type="submit" className="edit-bnt" disabled={isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save"}
+          </button>
         </div>
       </div>
 
       <div className="content-container-product">
         <div>
-          <p className="title-img-product">Ảnh sản phẩm</p>
+          <p className="title-img-product">Product images</p>
           <div className="container-img">
-            <div className="image-box">
-              {!image1 && <span className="placeholder">Chưa có ảnh</span>}
-
-              {image1 && (
-                <img src={image1} alt="preview" className="preview-img" />
-              )}
-
-              <div className="overlay">
-                <label className="btn-icon">
-                  <img src={editIcon} alt="edit" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleChange1}
-                    hidden
-                  />
-                </label>
-                <button className="btn-icon" onClick={handleRemove1}>
-                  <img src={trashIcon} alt="delete" />
-                </button>
-              </div>
-            </div>
-            <div className="image-box">
-              {!image2 && <span className="placeholder">Chưa có ảnh</span>}
-
-              {image2 && (
-                <img src={image2} alt="preview" className="preview-img" />
-              )}
-
-              <div className="overlay">
-                <label className="btn-icon">
-                  <img src={editIcon} alt="edit" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleChange2}
-                    hidden
-                  />
-                </label>
-                <button className="btn-icon" onClick={handleRemove2}>
-                  <img src={trashIcon} alt="delete" />
-                </button>
-              </div>
-            </div>
+            {[0, 1, 2, 3].map((index) => renderImageSlot(index))}
           </div>
-
           <div className="container-img">
-            <div className="image-box">
-              {!image3 && <span className="placeholder">Chưa có ảnh</span>}
-
-              {image3 && (
-                <img src={image3} alt="preview" className="preview-img" />
-              )}
-
-              <div className="overlay">
-                <label className="btn-icon">
-                  <img src={editIcon} alt="edit" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleChange3}
-                    hidden
-                  />
-                </label>
-                <button className="btn-icon" onClick={handleRemove3}>
-                  <img src={trashIcon} alt="delete" />
-                </button>
-              </div>
-            </div>
-            <div className="image-box">
-              {!image4 && <span className="placeholder">Chưa có ảnh</span>}
-
-              {image4 && (
-                <img src={image4} alt="preview" className="preview-img" />
-              )}
-
-              <div className="overlay">
-                <label className="btn-icon">
-                  <img src={editIcon} alt="edit" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleChange4}
-                    hidden
-                  />
-                </label>
-                <button className="btn-icon" onClick={handleRemove4}>
-                  <img src={trashIcon} alt="delete" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="container-img">
-            <div className="image-box">
-              {!image5 && <span className="placeholder">Chưa có ảnh</span>}
-
-              {image5 && (
-                <img src={image5} alt="preview" className="preview-img" />
-              )}
-
-              <div className="overlay">
-                <label className="btn-icon">
-                  <img src={editIcon} alt="edit" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleChange5}
-                    hidden
-                  />
-                </label>
-                <button className="btn-icon" onClick={handleRemove5}>
-                  <img src={trashIcon} alt="delete" />
-                </button>
-              </div>
-            </div>
-            <div className="image-box">
-              {/* {!image && <span className="placeholder">Chưa có ảnh</span>}
-
-              {image && (
-                <img src={image} alt="preview" className="preview-img" />
-              )}
-
-              <div className="overlay">
-                <label className="btn-icon">
-                  <img src={editIcon} alt="edit" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleChange}
-                    hidden
-                  />
-                </label>
-                <button className="btn-icon" onClick={handleRemove}>
-                  <img src={trashIcon} alt="delete" />
-                </button>
-              </div> */}
-            </div>
+            {[4].map((index) => renderImageSlot(index))}
+            <div className="image-box" />
           </div>
         </div>
 
         <div className="right-txt-product">
+          <p className="title-product">Collection:</p>
+          {collections.length > 0 ? (
+            <select
+              name="collectId"
+              value={form.collectId}
+              onChange={handleInputChange}
+              className="product-short-input-select"
+            >
+              {collections.map((collection) => (
+                <option key={collection.id} value={collection.id}>
+                  {collection.name}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div
+              className={`field-message${
+                collectionsError ? " error" : ""
+              }`}
+            >
+              {isLoadingCollections
+                ? "Loading collections..."
+                : collectionsError ?? "No collections available."}
+            </div>
+          )}
+
           <p className="title-product">Product name:</p>
-          <input type="text" className="input-product-name" />
+          <input
+            name="title"
+            value={form.title}
+            onChange={handleInputChange}
+            type="text"
+            className="input-product-name"
+            placeholder="Enter product name"
+          />
 
           <p className="title-product">Description:</p>
-          <textarea rows={5} className="input-product-discription" />
-          
-          <p className="title-product">Dimensions:</p>
-          <input type="text" className="product-short-input" />
+          <textarea
+            name="descript"
+            rows={5}
+            className="input-product-discription"
+            value={form.descript}
+            onChange={handleInputChange}
+            placeholder="Describe the product"
+          />
 
-          <p className="title-product">Color:</p>
+          <p className="title-product">Create date:</p>
+          <input
+            name="createDate"
+            type="date"
+            className="product-short-input"
+            value={form.createDate}
+            onChange={handleInputChange}
+          />
+
+          <p className="title-product">Status:</p>
           <select
-            value={selected}
-            onChange={(e) => setSelected(e.target.value)}
+            name="status"
+            value={form.status}
+            onChange={handleInputChange}
             className="product-short-input-select"
           >
-            <option value="">-- Select color --</option>
-            {colors.map((color) => (
-              <option key={color.id} value={color.name}>
-                {color.name}
-              </option>
-            ))}
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
           </select>
 
           <p className="title-product">Price:</p>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <input type="number" className="product-short-input" />
+            <input
+              name="price"
+              type="number"
+              className="product-short-input"
+              value={form.price}
+              onChange={handleInputChange}
+              min="0"
+              step="0.01"
+              placeholder="0"
+            />
             <p className="title-product">VND</p>
           </div>
 
-          <p className="title-product">Availability:</p>
+          <p className="title-product">Stock:</p>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <button>-</button>
-            <span>10</span>
-            <button>+</button>
-            <p className="title-product">in stock</p>
+            <button type="button" onClick={() => adjustStock(-1)}>
+              -
+            </button>
+            <input
+              type="number"
+              min="0"
+              value={form.stock}
+              onChange={handleStockChange}
+              className="product-short-input"
+              style={{ width: "80px", textAlign: "center" }}
+            />
+            <button type="button" onClick={() => adjustStock(1)}>
+              +
+            </button>
+            <p className="title-product">items</p>
           </div>
+
+          {feedback && (
+            <p className={`submit-feedback ${feedback.type}`}>{feedback.message}</p>
+          )}
         </div>
       </div>
-    </div>
+    </form>
   );
-}
+};
 
 export default CreateProduct;
