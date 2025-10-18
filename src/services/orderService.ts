@@ -1,22 +1,45 @@
-import { apiRequest } from "./apiClient";
+import { apiRequest, API_BASE_URL } from "./apiClient";
 
 interface BackendOrderDetail {
   id: number;
   quantity?: number | null;
   price?: number | null;
+  productId?: number | null;
+  product?: {
+    id: number;
+    title?: string | null;
+    descript?: string | null;
+    price?: number | null;
+  } | null;
 }
 
 interface BackendOrder {
   id: number;
   name?: string | null;
+  phone?: string | null;
+  address?: string | null;
   createDate?: string | null;
   totalPrice?: number | null;
+  shipPrice?: number | null;
   payPrice?: number | null;
   status?: string | null;
+  payMethod?: string | null;
   orderDetails?: BackendOrderDetail[] | null;
   user?: {
     name?: string | null;
+    phone?: string | null;
+    address?: string | null;
   } | null;
+}
+
+export interface OrderProductLine {
+  id: number;
+  productId?: number;
+  title: string;
+  description: string;
+  quantity: number;
+  price: number;
+  total: number;
 }
 
 export interface OrderListItem {
@@ -26,6 +49,15 @@ export interface OrderListItem {
   total: number;
   products: number;
   status?: string;
+  shipPrice: number;
+  payPrice: number;
+  phone?: string;
+  address?: string;
+  details: OrderProductLine[];
+}
+
+export interface OrderDetailData extends OrderListItem {
+  subtotal: number;
 }
 
 const getOrderCustomer = (order: BackendOrder) =>
@@ -39,26 +71,100 @@ const getOrderDate = (order: BackendOrder) => {
   return Number.isNaN(date.getTime()) ? "" : date.toISOString();
 };
 
-const getProductCount = (order: BackendOrder) =>
-  (order.orderDetails ?? []).reduce(
-    (total, detail) => total + Number(detail.quantity ?? 0),
-    0
-  );
+const mapOrderLines = (order: BackendOrder): OrderProductLine[] =>
+  (order.orderDetails ?? []).map((detail) => {
+    const quantity = Number(detail.quantity ?? 0);
+    const unitPrice =
+      Number(detail.price ?? detail.product?.price ?? 0);
+    return {
+      id: detail.id,
+      productId: detail.productId ?? detail.product?.id ?? undefined,
+      title:
+        detail.product?.title?.trim() ||
+        `Product ${detail.productId ?? detail.id}`,
+      description: detail.product?.descript?.trim() || "",
+      quantity,
+      price: unitPrice,
+      total: quantity * unitPrice,
+    };
+  });
 
-const mapOrder = (order: BackendOrder): OrderListItem => ({
-  id: order.id,
-  customer: getOrderCustomer(order),
-  date: getOrderDate(order),
-  total: Number(order.payPrice ?? order.totalPrice ?? 0),
-  products: getProductCount(order),
-  status: order.status ?? undefined,
-});
+const mapOrderBase = (order: BackendOrder) => {
+  const details = mapOrderLines(order);
+  const subtotal = details.reduce((sum, line) => sum + line.total, 0);
+  const shipPrice = Number(order.shipPrice ?? 0);
+  const payPrice = Number(order.payPrice ?? subtotal + shipPrice);
+
+  return {
+    id: order.id,
+    customer: getOrderCustomer(order),
+    date: getOrderDate(order),
+    total: Number(order.totalPrice ?? subtotal),
+    products: details.reduce((sum, line) => sum + line.quantity, 0),
+    status: order.status ?? undefined,
+    shipPrice,
+    payPrice,
+    phone: order.phone ?? order.user?.phone ?? undefined,
+    address: order.address ?? order.user?.address ?? undefined,
+    details,
+    subtotal,
+  };
+};
+
+const mapOrder = (order: BackendOrder): OrderListItem => {
+  const base = mapOrderBase(order);
+  return {
+    id: base.id,
+    customer: base.customer,
+    date: base.date,
+    total: base.payPrice,
+    products: base.products,
+    status: base.status,
+    shipPrice: base.shipPrice,
+    payPrice: base.payPrice,
+    phone: base.phone,
+    address: base.address,
+    details: base.details,
+  };
+};
+
+const mapOrderDetail = (order: BackendOrder): OrderDetailData => {
+  const base = mapOrderBase(order);
+  return {
+    id: base.id,
+    customer: base.customer,
+    date: base.date,
+    total: base.payPrice,
+    products: base.products,
+    status: base.status,
+    shipPrice: base.shipPrice,
+    payPrice: base.payPrice,
+    phone: base.phone,
+    address: base.address,
+    details: base.details,
+    subtotal: base.subtotal,
+  };
+};
 
 const ORDER_BASE_PATH = "api/Order";
 
 export async function fetchOrders(): Promise<OrderListItem[]> {
   const orders = await apiRequest<BackendOrder[]>(ORDER_BASE_PATH);
   return orders.map(mapOrder);
+}
+
+export async function fetchOrderById(id: number): Promise<OrderDetailData> {
+  try {
+    const order = await apiRequest<BackendOrder>(`${ORDER_BASE_PATH}/${id}`);
+    return mapOrderDetail(order);
+  } catch (primaryError) {
+    const orders = await apiRequest<BackendOrder[]>(ORDER_BASE_PATH);
+    const found = orders.find((order) => order.id === id);
+    if (!found) {
+      throw primaryError;
+    }
+    return mapOrderDetail(found);
+  }
 }
 
 export async function fetchPendingOrder(userId: number) {
@@ -85,19 +191,43 @@ export async function deleteOrderDetail(userId: number, orderDetailId: number) {
 }
 
 export async function updateOrderStatus(orderId: number, status: string) {
-  return apiRequest<string>(
-    `${ORDER_BASE_PATH}/update-status/${orderId}?status=${encodeURIComponent(
-      status
-    )}`,
-    { method: "PUT" }
-  );
+  const url = `${API_BASE_URL}/${ORDER_BASE_PATH}/update-status/${orderId}?status=${encodeURIComponent(
+    status
+  )}`;
+  const response = await fetch(url, { method: "PUT" });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(
+      message || `Failed to update status (HTTP ${response.status})`
+    );
+  }
+
+  const contentType = response.headers.get("Content-Type") ?? "";
+  if (contentType.includes("application/json")) {
+    return (await response.json()) as { message: string };
+  }
+
+  const text = await response.text();
+  return { message: text || "Updated" };
 }
 
 export async function updateOrderPayMethod(orderId: number, method: string) {
-  return apiRequest<string>(
-    `${ORDER_BASE_PATH}/update-paymethod/${orderId}?method=${encodeURIComponent(
-      method
-    )}`,
-    { method: "PUT" }
-  );
+  const url = `${API_BASE_URL}/${ORDER_BASE_PATH}/update-paymethod/${orderId}?method=${encodeURIComponent(
+    method
+  )}`;
+  const response = await fetch(url, { method: "PUT" });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(
+      message || `Failed to update payment method (HTTP ${response.status})`
+    );
+  }
+
+  const contentType = response.headers.get("Content-Type") ?? "";
+  if (contentType.includes("application/json")) {
+    return (await response.json()) as { message: string };
+  }
+
+  const text = await response.text();
+  return { message: text || "Updated" };
 }

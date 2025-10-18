@@ -9,6 +9,9 @@ import Voucher from "../screen/Voucher";
 import ProductDetail from "../screen/ProductDetail";
 import OrderDetail from "../screen/OrderDetail";
 import CreateProduct from "../screen/CreateProduct";
+import BlindBoxes from "../screen/BlindBoxes";
+import BlindBoxDetail from "../screen/BlindBoxDetail";
+import CreateBlindBox from "../screen/CreateBlindBox";
 
 const AppRouter = () => {
     return (
@@ -22,6 +25,9 @@ const AppRouter = () => {
             <Route path="/User" element={<User />} />
             <Route path="/Shipping" element={<Shipping />} />
             <Route path="/ProductDetail/:id" element={<ProductDetail />} />
+            <Route path="/BlindBoxes" element={<BlindBoxes />} />
+            <Route path="/BlindBoxDetail/:id" element={<BlindBoxDetail />} />
+            <Route path="/CreateBlindBox" element={<CreateBlindBox />} />
             <Route path="/OrderDetail/:id" element={<OrderDetail />} />
             <Route path="/CreateProduct" element={<CreateProduct />} />
         </Routes>

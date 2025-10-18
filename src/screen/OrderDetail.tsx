@@ -1,95 +1,249 @@
-import { useParams } from "react-router-dom";
+import React from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "../css/OrderDetail.css";
-import { useEffect, useState } from "react";
 import OrderSteps from "../component/OrderSteps";
+import {
+  fetchOrderById,
+  OrderDetailData,
+  updateOrderStatus,
+} from "../services/orderService";
 
+const STATUS_OPTIONS = ["pending", "processing", "shipped", "completed", "cancelled"];
 
-interface Order {
-  orderId: number;
-  status: string;
-  products: {
-    id: number;
-    title: string;
-    name: string;
-    qty: number;
-    price: number;
-    image: string;
-  }[];
-}
+const mapStatusToStep = (
+  status?: string
+): "ToPay" | "ToShip" | "Shipping" | "Delivered" => {
+  switch ((status ?? "").toLowerCase()) {
+    case "pending":
+      return "ToPay";
+    case "processing":
+      return "ToShip";
+    case "shipped":
+      return "Shipping";
+    case "completed":
+    case "delivered":
+      return "Delivered";
+    default:
+      return "ToPay";
+  }
+};
 
+const formatCurrency = (value?: number | null) => {
+  const numeric = Number(value ?? 0);
+  if (Number.isNaN(numeric)) {
+    return "0 VND";
+  }
+  return `${numeric.toLocaleString("vi-VN")} VND`;
+};
+
+const formatDateTime = (value?: string) => {
+  if (!value) return "N/A";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? "N/A"
+    : date.toLocaleString("vi-VN");
+};
 
 const OrderDetail = () => {
-  const { OrderId } = useParams();
-  const [order, setOrder] = useState<Order | null>(null);
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const initialOrder = location.state?.order as OrderDetailData | undefined;
 
-  useEffect(() => {
-    fetch("/orderDetail.json")
-      .then((res) => res.json())
-      .then((data) => setOrder(data));
-  }, [OrderId]);
+  const [order, setOrder] = React.useState<OrderDetailData | null>(
+    initialOrder ?? null
+  );
+  const [status, setStatus] = React.useState(initialOrder?.status ?? "");
+  const [isLoading, setIsLoading] = React.useState(!initialOrder);
+  const [error, setError] = React.useState<string | null>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = React.useState(false);
+  const [updateFeedback, setUpdateFeedback] = React.useState<string | null>(
+    null
+  );
 
+  React.useEffect(() => {
+    if (!order && id) {
+      let isMounted = true;
+      const orderId = Number(id);
+      if (Number.isNaN(orderId)) {
+        setError("Order id is invalid.");
+        setIsLoading(false);
+        return;
+      }
 
+      fetchOrderById(orderId)
+        .then((data) => {
+          if (isMounted) {
+            setOrder(data);
+            setStatus(data.status ?? "");
+          }
+        })
+        .catch((err) => {
+          if (isMounted) {
+            const message =
+              err instanceof Error ? err.message : "Unable to load order.";
+            setError(message);
+          }
+        })
+        .finally(() => {
+          if (isMounted) {
+            setIsLoading(false);
+          }
+        });
+
+      return () => {
+        isMounted = false;
+      };
+    } else if (initialOrder) {
+      setStatus(initialOrder.status ?? "");
+    }
+  }, [id, order, initialOrder]);
+
+  const handleUpdateStatus = async () => {
+    if (!order) return;
+    if (!status) {
+      setUpdateFeedback("Please select a status.");
+      return;
+    }
+
+    setIsUpdatingStatus(true);
+    setUpdateFeedback(null);
+    try {
+      await updateOrderStatus(order.id, status);
+      setOrder((prev) =>
+        prev ? { ...prev, status } : prev
+      );
+      setUpdateFeedback("Status updated successfully.");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to update status.";
+      setUpdateFeedback(message);
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
 
   return (
     <div className="order-detail-container">
-      <h3 className="order-id">ORDER ID: 12345</h3>
-      <div>
-        <OrderSteps status={order?.status as "ToPay" | "ToShip" | "Shipping" | "Delivered"} />
+      <div className="order-detail-header">
+        <button className="back-button" onClick={() => navigate("/Orders")}>
+          {"<-"} Back
+        </button>
+        {order && (
+          <div className="order-info-summary">
+            <h3 className="order-id">Order #{order.id}</h3>
+            <p>Created at: {formatDateTime(order.date)}</p>
+            <p>Customer: {order.customer}</p>
+          </div>
+        )}
+        <div className="status-update">
+          <select
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+          >
+            <option value="">-- Select status --</option>
+            {STATUS_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={handleUpdateStatus}
+            disabled={isUpdatingStatus || !order}
+          >
+            {isUpdatingStatus ? "Updating..." : "Update status"}
+          </button>
+          {updateFeedback && (
+            <span
+              className={`status-feedback ${
+                updateFeedback.includes("successfully") ? "success" : "error"
+              }`}
+            >
+              {updateFeedback}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="order-detail-content">
-        <h3 className="product-list-order">Danh sách sản phẩm</h3>
-        <div className="product-items-order">
-          {order?.products.map((product) => (
-            <div className="product-item-order" key={product.id}>
-                <img src={product.image} alt={product.name} className="product-image-order" />
-                <div className="product-info-order">
+      {isLoading && (
+        <div className="order-feedback">Loading order details...</div>
+      )}
+      {error && <div className="order-feedback error">{error}</div>}
+
+      {order && !isLoading && !error && (
+        <>
+          <div>
+            <OrderSteps status={mapStatusToStep(order.status)} />
+          </div>
+
+          <div className="order-detail-content">
+            <h3 className="product-list-order">Products</h3>
+            <div className="product-items-order">
+              {order.details.map((product) => (
+                <div className="product-item-order" key={product.id}>
+                  <div className="product-info-order">
                     <div className="product-name-title">
-                        <h4 className="product-title">{product.title}</h4>
-                        <p className="product-name">{product.name}</p>
+                      <h4 className="product-title">{product.title}</h4>
+                      <p className="product-name">
+                        {product.description || "No description"}
+                      </p>
                     </div>
-                    
-                    <p className="product-quantity">Số lượng: {product.qty}</p>
-                    <p className="product-price">{product.price} vnd</p>
-                </div>
-            </div>
-          ))}  
-        </div> 
-      </div>
 
-        <div className="shipping-address">
-            <h3 className="shipping-address-title">Thông tin giao hàng</h3>
+                    <p className="product-quantity">
+                      Quantity: {product.quantity}
+                    </p>
+                    <p className="product-price">
+                      Unit price: {formatCurrency(product.price)}
+                    </p>
+                    <p className="product-price">
+                      Line total: {formatCurrency(product.total)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="shipping-address">
+            <h3 className="shipping-address-title">Shipping information</h3>
             <div className="address-info-border">
-                <div className="name-phone">
-                    <p>Tên:</p>
-                    <p className="content-name-info">Nguyen Van A |</p>
-                    <p> (+84) 0123456789</p>
-                </div>
-                <div className="address-detail">
-                    <p>Địa chỉ: </p>
-                    <p className="content-address-info"> 123 ABC, Ward 1, District 1, HCM City</p>
-                </div>
+              <div className="name-phone">
+                <p>Name:</p>
+                <p className="content-name-info">
+                  {order.customer} | {order.phone ?? "N/A"}
+                </p>
+              </div>
+              <div className="address-detail">
+                <p>Address:</p>
+                <p className="content-address-info">
+                  {order.address ?? "N/A"}
+                </p>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <div className="payment-method-container">
-            <h3 className="payment-method">Tổng thanh toán</h3>
+          <div className="payment-method-container">
+            <h3 className="payment-method">Payment summary</h3>
             <div className="total-info-border">
-                <div className="subtotal">
-                    <p>Tiền ước tính:</p>
-                    <p>235.000 vnd</p>
-                </div>
-                <div className="shipping-charge">
-                    <p>Phí giao hàng:</p>
-                    <p>10.000 vnd</p>
-                </div>
-                <div className="line-order-detail-payment"></div>
-                <div className="total">
-                    <p>Tổng</p>
-                    <p>245.000 vnd</p>
-                </div>
+              <div className="subtotal">
+                <p>Subtotal:</p>
+                <p>{formatCurrency(order.subtotal)}</p>
+              </div>
+              <div className="shipping-charge">
+                <p>Shipping:</p>
+                <p>{formatCurrency(order.shipPrice)}</p>
+              </div>
+              <div className="line-order-detail-payment"></div>
+              <div className="total">
+                <p>Total payable</p>
+                <p>{formatCurrency(order.payPrice)}</p>
+              </div>
             </div>
-        </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
