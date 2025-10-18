@@ -136,6 +136,39 @@
 }
 
 
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.product-summary {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.product-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #173da2;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.summary-value {
+  font-size: 14px;
+  color: #173da2;
+}
+
 .right-txt-product {
   width: 55%;
   display: grid;
@@ -225,4 +258,17 @@ textarea {
 
 .field-message.error {
   color: #d9534f;
+}
+
+.readonly-input {
+  background-color: #f6f8ff;
+  border-color: #d1dcff;
+  color: #173da2;
+}
+
+.readonly-textarea {
+  background-color: #f6f8ff;
+  border-color: #d1dcff;
+  color: #173da2;
+  min-height: 120px;
 }

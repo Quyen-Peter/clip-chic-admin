@@ -42,6 +42,16 @@ const Products = () => {
     };
   }, []);
 
+  const formatPrice = (value: number) =>
+    value > 0 ? `${value.toLocaleString("vi-VN")} VND` : "Updating";
+
+  const formatCreatedDate = (value?: string) => {
+    if (!value) return "Updating";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Updating";
+    return date.toLocaleDateString("vi-VN");
+  };
+
   return (
     <div className="container">
       <div className="header">
@@ -87,65 +97,21 @@ const Products = () => {
             <span className="product-name">
               {product.title}
               <span className="product-description">
-                {" "}
-                {product.description}
+                {product.collectionName ? `Collection: ${product.collectionName}` : ""}
+                {product.collectionName && product.description ? " · " : ""}
+                {product.description || "No description"}
+              </span>
+              {product.status && (
+                <span className={`product-status status-${product.status.toLowerCase()}`}>
+                  {product.status}
+                </span>
+              )}
+              <span className="product-meta">
+                Created: {formatCreatedDate(product.createDate)}
               </span>
             </span>
             <span className="product-price">
-              {product.price.toLocaleString("vi-VN")} VND
-            </span>
-            <span className="product-quantity">{product.stock}</span>
-            <span className="product-action">
-              <button
-                className="edit-button"
-                onClick={() => navigate(`/ProductDetail/${product.id}`)}
-              >
-                <img src={edit} alt="Edit" />
-              </button>
-
-              <button className="delete-button">
-                <img src={trast} alt="Delete" />
-              </button>
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <div className="header">
-        <div className="header-flex">
-          <h2>Blindbox Sets</h2>
-          <button className="add-more-bnt">
-            <h2>Add blindbox</h2>
-          </button>
-        </div>
-        <div className="header-product">
-          <p>Blindbox items currently in the catalogue</p>
-          <p className="header-product-show">
-            Showing {products.length} products
-          </p>
-        </div>
-      </div>
-
-      <div className="product-list">
-        <div className="product-header">
-          <span className="product-header-image">Image</span>
-          <span className="product-header-name">Product</span>
-          <span className="product-header-price">Price</span>
-          <span className="product-header-quantity">Stock</span>
-          <span className="product-header-action">Actions</span>
-        </div>
-        {products.map((product) => (
-          <div className="product-item" key={`${product.id}-blindbox`}>
-            <span className="product-image">
-              {product.image ? (
-                <img src={product.image} alt={product.title} />
-              ) : (
-                <span className="product-no-image">No image</span>
-              )}
-            </span>
-            <span className="product-name-blindbox">{product.title}</span>
-            <span className="product-price">
-              {product.price.toLocaleString("vi-VN")} VND
+              {formatPrice(product.price)}
             </span>
             <span className="product-quantity">{product.stock}</span>
             <span className="product-action">

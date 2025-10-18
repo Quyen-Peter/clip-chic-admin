@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import "../css/Order.css";
+import { useNavigate } from "react-router-dom";
 import { fetchOrders, OrderListItem } from "../services/orderService";
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<OrderListItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
@@ -51,8 +53,12 @@ const Orders: React.FC = () => {
       : date.toLocaleDateString("vi-VN");
   };
 
-  const formatTotal = (value: number) =>
+  const formatCurrency = (value: number) =>
     `${value.toLocaleString("vi-VN")} VND`;
+
+  const handleViewDetail = (order: OrderListItem) => {
+    navigate(`/OrderDetail/${order.id}`, { state: { order } });
+  };
 
   return (
     <div className="order-container">
@@ -70,7 +76,8 @@ const Orders: React.FC = () => {
             <th>ORDER ID</th>
             <th>CUSTOMER</th>
             <th>DATE</th>
-            <th>TOTAL</th>
+            <th>PAYABLE</th>
+            <th>STATUS</th>
             <th>ACTION</th>
           </tr>
         </thead>
@@ -95,13 +102,18 @@ const Orders: React.FC = () => {
               <td>{order.customer}</td>
               <td>{formatDate(order.date)}</td>
               <td>
-                {formatTotal(order.total)} ({order.products}{" "}
+                {formatCurrency(order.payPrice)} ({order.products}{" "}
                 {order.products > 1 ? "Products" : "Product"})
               </td>
+              <td>{order.status ?? "N/A"}</td>
               <td className="action">
-                <a href={`/OrderDetail/${order.id}`} className="view-details">
+                <button
+                  type="button"
+                  className="view-details"
+                  onClick={() => handleViewDetail(order)}
+                >
                   View Details {"->"}
-                </a>
+                </button>
               </td>
             </tr>
           ))}
