@@ -63,9 +63,9 @@ const Orders: React.FC = () => {
   return (
     <div className="order-container">
       <div className="header-order">
-        <h2>Order management</h2>
+        <h2>Quản lý các đơn đặt hàng</h2>
         <div className="header-order-flex">
-          <p>Orders currently recorded in the system</p>
+          <p>Đơn hàng hiện đang được ghi lại trong hệ thống</p>
           <p>{headingSummary}</p>
         </div>
       </div>
@@ -73,12 +73,12 @@ const Orders: React.FC = () => {
       <table className="order-table">
         <thead>
           <tr>
-            <th>ORDER ID</th>
-            <th>CUSTOMER</th>
-            <th>DATE</th>
-            <th>PAYABLE</th>
-            <th>STATUS</th>
-            <th>ACTION</th>
+            <th>MÃ đơn hàng</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Giá đơn</th>
+            <th>Trạng thái</th>
+            <th>Chi tiết</th>
           </tr>
         </thead>
         <tbody>
@@ -112,7 +112,7 @@ const Orders: React.FC = () => {
                   className="view-details"
                   onClick={() => handleViewDetail(order)}
                 >
-                  View Details {"->"}
+                  Chi tiết {"->"}
                 </button>
               </td>
             </tr>

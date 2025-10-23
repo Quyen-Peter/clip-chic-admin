@@ -1,6 +1,5 @@
 .container-product-detail {
   height: 100vh;
-  overflow-y: auto;
   padding: 20px 40px;
   box-sizing: border-box;
 }

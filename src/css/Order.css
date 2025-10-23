@@ -67,6 +67,11 @@
   color: #FF6EA5;
 }
 
+.view-details{
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
 
 .order-table th:first-child {
   border-top-left-radius: 10px;

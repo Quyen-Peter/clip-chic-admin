@@ -175,7 +175,7 @@ const OrderDetail = () => {
       {order && !isLoading && !error && (
         <>
           <div>
-            <OrderSteps status={mapStatusToStep(order.status)} />
+           <OrderSteps status={(order.status ?? "pending") as any} />
           </div>
 
           <div className="order-detail-content">
