@@ -183,6 +183,13 @@ const OrderDetail = () => {
             <div className="product-items-order">
               {order.details.map((product) => (
                 <div className="product-item-order" key={product.id}>
+                  {product.images && product.images.length > 0 && (
+                    <div className="product-images">
+                      {product.images.map((src, idx) => (
+                        <img key={idx} src={src} alt={`${product.title} ${idx + 1}`} />
+                      ))}
+                    </div>
+                  )}
                   <div className="product-info-order">
                     <div className="product-name-title">
                       <h4 className="product-title">{product.title}</h4>

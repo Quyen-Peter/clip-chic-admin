@@ -10,6 +10,15 @@ interface BackendOrderDetail {
     title?: string | null;
     descript?: string | null;
     price?: number | null;
+    images?: { id: number; name?: string | null; address?: string | null }[] | null;
+  } | null;
+  blindBoxId?: number | null;
+  blindBox?: {
+    id: number;
+    name?: string | null;
+    descript?: string | null;
+    price?: number | null;
+    images?: { id: number; name?: string | null; address?: string | null }[] | null;
   } | null;
 }
 
@@ -35,11 +44,13 @@ interface BackendOrder {
 export interface OrderProductLine {
   id: number;
   productId?: number;
+  kind?: "product" | "blindBox";
   title: string;
   description: string;
   quantity: number;
   price: number;
   total: number;
+  images: string[];
 }
 
 export interface OrderListItem {
@@ -74,18 +85,40 @@ const getOrderDate = (order: BackendOrder) => {
 const mapOrderLines = (order: BackendOrder): OrderProductLine[] =>
   (order.orderDetails ?? []).map((detail) => {
     const quantity = Number(detail.quantity ?? 0);
-    const unitPrice =
-      Number(detail.price ?? detail.product?.price ?? 0);
+    const isProduct = !!detail.product || !!detail.productId;
+
+    const title = isProduct
+      ? (detail.product?.title?.trim() || `Product ${detail.productId ?? detail.id}`)
+      : (detail.blindBox?.name?.trim() || `Blind Box ${detail.blindBoxId ?? detail.id}`);
+
+    const description = isProduct
+      ? (detail.product?.descript?.trim() || "")
+      : (detail.blindBox?.descript?.trim() || "");
+
+    const priceSource = isProduct
+      ? detail.product?.price
+      : detail.blindBox?.price;
+    const unitPrice = Number(detail.price ?? priceSource ?? 0);
+
+    const images = (isProduct
+      ? (detail.product?.images ?? [])
+      : (detail.blindBox?.images ?? [])
+    )
+      .map((img) => img?.address)
+      .filter((addr): addr is string => typeof addr === "string" && addr.length > 0);
+
     return {
       id: detail.id,
-      productId: detail.productId ?? detail.product?.id ?? undefined,
-      title:
-        detail.product?.title?.trim() ||
-        `Product ${detail.productId ?? detail.id}`,
-      description: detail.product?.descript?.trim() || "",
+      productId: isProduct
+        ? (detail.productId ?? detail.product?.id ?? undefined)
+        : undefined,
+      kind: isProduct ? "product" : "blindBox",
+      title,
+      description,
       quantity,
       price: unitPrice,
       total: quantity * unitPrice,
+      images,
     };
   });
 
