@@ -98,7 +98,8 @@ const mapOrderLines = (order: BackendOrder): OrderProductLine[] =>
     const priceSource = isProduct
       ? detail.product?.price
       : detail.blindBox?.price;
-    const unitPrice = Number(detail.price ?? priceSource ?? 0);
+    const unitPrice = Number(priceSource ?? 0);
+    const lineTotal = Number(detail.price ?? 0);
 
     const images = (isProduct
       ? (detail.product?.images ?? [])
@@ -117,14 +118,14 @@ const mapOrderLines = (order: BackendOrder): OrderProductLine[] =>
       description,
       quantity,
       price: unitPrice,
-      total: quantity * unitPrice,
+      total: lineTotal,
       images,
     };
   });
 
 const mapOrderBase = (order: BackendOrder) => {
   const details = mapOrderLines(order);
-  const subtotal = Number(order.totalPrice ?? 0);
+  const subtotal = details.reduce((sum, line) => sum + line.total, 0);
   const shipPrice = Number(order.shipPrice ?? 0);
   const payPrice = Number(order.payPrice ?? subtotal + shipPrice);
 

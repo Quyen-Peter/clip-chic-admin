@@ -1,92 +1,136 @@
-.order-container{
-    height: 100vh;
+.order-container {
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
 }
 
-.header-order h2{
-    color: #FF8FB4;
+/* Tiêu đề và mô tả */
+.header-order {
+  margin-bottom: 15px;
 }
 
-.header-order-flex{
-    display: flex;
-    justify-content: space-between;
-    margin-top: -20px;
+.header-order h2 {
+  color: #173da2;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 6px;
 }
 
-.header-order-flex p{
-    color: #173DA2;
+.header-order-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
+.header-order-flex p {
+  color: #555;
+  font-size: 14px;
+}
+
+/* Bảng đơn hàng */
 .order-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
-  border-radius: 10px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(255, 182, 217, 0.3);
+  border: 2px solid #ffb6d9;
 }
 
-.order-table thead {
-  background-color: #ff8fb4;
+/* Header của bảng */
+.order-table thead tr {
+  background-color: #ff69b4;
   color: white;
-}
-
-.order-table th {
-  padding: 15px;
   text-align: left;
-  font-size: 14px;
-  letter-spacing: 0.5px;
 }
 
+.order-table thead th {
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+}
+
+/* Dòng nội dung */
 .order-table tbody tr {
-  border-bottom: 1px solid #f5f5f5;
+  background-color: #fff;
+  border-bottom: 1px solid #ffe4f2;
+  transition: background-color 0.2s ease;
 }
 
+.order-table tbody tr:nth-child(even) {
+  background-color: #fff7fb;
+}
+
+.order-table tbody tr:hover {
+  background-color: #ffe6f3;
+}
+
+/* Ô trong bảng */
 .order-table td {
-  padding: 14px 16px;
-  color: #173da2;
+  padding: 12px 20px;
   font-size: 14px;
+  color: #173da2;
+  vertical-align: middle;
 }
 
-.order-table .order-id {
+/* ID đơn hàng */
+.order-id {
   font-weight: 600;
   color: #173da2;
 }
 
-.order-table .action {
-  text-align: left;
+/* Trạng thái — màu theo loại */
+.status {
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: none;
 }
 
-.order-table .view-details {
-  color: #ffa4c3;
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.2s;
+.status.payment,
+.status.processing,
+.status.shipping,
+.status.delivered{
+  color: #007bff;
 }
 
-.order-table .view-details:hover {
-  color: #FF6EA5;
+.status.cancelled,
+.status.failed,
+.status.refunded,
+.status.returned{
+  color: #dc3545; 
 }
 
-.view-details{
-  background-color: transparent;
+.status.unknown,
+.status.pending{
+  color: #6c757d;
+}
+
+/* Nút xem chi tiết */
+.action {
+  text-align: right;
+}
+
+.view-details {
+  background: none;
   border: none;
+  color: #ff66a3;
+  font-weight: 600;
   cursor: pointer;
+  transition: color 0.2s;
+  font-size: 14px;
 }
 
-.order-table th:first-child {
-  border-top-left-radius: 10px;
-}
-.order-table th:last-child {
-  border-top-right-radius: 10px;
+.view-details:hover {
+  text-decoration: underline;
 }
 
+/* Trạng thái loading & error */
 .order-feedback {
-  padding: 16px;
   text-align: center;
+  padding: 15px;
   color: #173da2;
-  font-weight: 500;
 }
 
 .order-feedback.error {
-  color: #d9534f;
+  color: #d63384;
 }

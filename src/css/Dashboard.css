@@ -1,0 +1,336 @@
+
+
+/* hôm nay */
+
+.dashboard-today {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.dashboard-card {
+  flex: 1;
+  min-width: 250px;
+  background-color: #fff;
+  border: 2px solid #ffb6d9;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(255, 182, 217, 0.3);
+  padding: 10px;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(255, 182, 217, 0.5);
+}
+
+.dashboard-card span:first-child {
+  display: block;
+  font-weight: 600;
+  color: #ff66a3;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.dashboard-card span:last-child {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: #173da2;
+}
+
+/* bán chạy, đơn hàng mới */
+.dashboard-lists {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Hàng 1: hai bảng song song */
+.product-row {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.list-card {
+  flex: 1;
+  background: #fff;
+  border: 2px solid #ffb6d9;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(255, 182, 217, 0.3);
+  display: flex;
+  flex-direction: column;
+  max-height: 340px;
+  min-width: 360px;
+}
+
+.list-header {
+  background-color: #ff66a3;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  padding: 10px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  font-size: 15px;
+}
+
+.list-content {
+  background: #fff;
+  padding: 10px 16px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ffb6d9 #fff;
+  max-height: 300px;
+}
+
+.list-content::-webkit-scrollbar {
+  width: 6px;
+}
+.list-content::-webkit-scrollbar-thumb {
+  background-color: #ffb6d9;
+  border-radius: 10px;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #ffd6e9;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.list-item span:first-child {
+  color: #173da2;
+  font-weight: 500;
+}
+.list-item span:last-child {
+  color: #ff66a3;
+  font-weight: 600;
+}
+
+/* Hàng 2: bảng đơn hàng */
+.order-section {
+  width: 100%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(255, 182, 217, 0.3);
+  border: 2px solid #ffb6d9;
+  overflow: hidden;
+}
+
+.order-title {
+  color: #173da2;
+  font-size: 17px;
+  font-weight: 600;
+  margin: 12px 0 10px 18px;
+}
+
+.order-table {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Header của bảng */
+.order-header {
+  display: grid;
+  grid-template-columns: 1.2fr 1.8fr 1.5fr 1.8fr 1.8fr 1fr;
+  background-color: #ff69b4;
+  color: white;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+/* Dòng nội dung */
+.order-body {
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.order-body::-webkit-scrollbar {
+  width: 6px;
+}
+.order-body::-webkit-scrollbar-thumb {
+  background: #ffb6d9;
+  border-radius: 10px;
+}
+
+.order-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.8fr 1.5fr 1.8fr 1.8fr 1fr;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ffe4f2;
+  align-items: center;
+  font-size: 14px;
+}
+
+.order-row:nth-child(even) {
+  background-color: #fff7fb;
+}
+
+.order-row:hover {
+  background-color: #ffe6f3;
+}
+
+.order-row span {
+  color: #173da2;
+}
+
+.order-row .status {
+  color: #ff66a3;
+  font-weight: 600;
+}
+
+.order-row {
+  transition: background-color 0.2s ease-in-out; 
+}
+
+.order-row:hover {
+  background-color: #ffe6f3;
+}
+
+.order-row .detail {
+  color: #ff66a3;
+  cursor: pointer;
+  text-align: right;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out; 
+}
+
+.order-row:hover .detail {
+  background-color: #ffe6f3;
+  color: #ff3385;
+}
+
+
+
+
+
+
+
+/* tháng trước */
+
+.dashboard-month {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.month-card {
+  flex: 1;
+  min-width: 280px;
+  background: #fff;
+  border: 2px solid #ffb6d9;
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(255, 182, 217, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.month-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(255, 182, 217, 0.5);
+}
+
+.month-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.month-row span:first-child {
+  color: #ff66a3;
+  font-weight: 500;
+}
+
+.month-row span:last-child {
+  font-weight: 700;
+  color: #173da2;
+}
+
+.change {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.change.up {
+  color: #0db67d; /* xanh lá cho tăng */
+}
+
+.change.down {
+  color: #f04d6f; /* đỏ cho giảm */
+}
+
+
+/* biểu đồ doanh thu */
+
+.sales-chart-container {
+  background: #fff;
+  border: 2px solid #ffb6d9;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(255, 182, 217, 0.3);
+  padding: 20px 25px;
+  font-family: "Poppins", sans-serif;
+  color: #173da2;
+  min-height: 400px; /* 🩵 Thêm dòng này để biểu đồ luôn có không gian hiển thị */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sales-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sales-chart-header span {
+  font-weight: 600;
+  font-size: 17px;
+  width: 400px;
+}
+
+.sales-chart-header select {
+  border: 2px solid #ffb6d9;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #173da2;
+  background: #fff7fb;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.sales-chart-header select:hover {
+  background: #ffe6f3;
+}
+
+.loading {
+  text-align: center;
+  color: #ff66a3;
+  font-weight: 600;
+  margin-top: 50px;
+}

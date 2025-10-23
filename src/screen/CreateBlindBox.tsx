@@ -223,18 +223,18 @@ const CreateBlindBox = () => {
           onClick={() => navigate("/BlindBoxes")}
           className="bnt-back"
         >
-          Back
+          Thoát
         </button>
         <div className="bnt-edit-delete">
           <button className="edit-bnt" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Saving..." : "Save"}
+            {isSubmitting ? "Saving..." : "lưu"}
           </button>
         </div>
       </div>
 
       <div className="content-container-product">
         <div>
-          <p className="title-img-product">Blindbox images</p>
+          <p className="title-img-product">Ảnh sản phẩm</p>
           <div className="image-grid">
             {images.map((slot, index) => (
               <div className="image-box" key={`image-slot-${index}`}>
@@ -272,7 +272,7 @@ const CreateBlindBox = () => {
         </div>
 
         <div className="right-txt-product">
-          <p className="title-product">Collection:</p>
+          <p className="title-product">Thể loại:</p>
           {collections.length > 0 ? (
             <select
               name="collectId"
@@ -298,7 +298,7 @@ const CreateBlindBox = () => {
             </div>
           )}
 
-          <p className="title-product">Blindbox name:</p>
+          <p className="title-product">Tên sản phẩm:</p>
           <input
             name="name"
             value={form.name}
@@ -308,7 +308,7 @@ const CreateBlindBox = () => {
             placeholder="Enter blindbox name"
           />
 
-          <p className="title-product">Description:</p>
+          <p className="title-product">mô tả:</p>
           <textarea
             name="descript"
             rows={5}
@@ -318,7 +318,7 @@ const CreateBlindBox = () => {
             placeholder="Describe the blindbox"
           />
 
-          <p className="title-product">Price:</p>
+          <p className="title-product">Giá:</p>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <input
               name="price"
@@ -333,7 +333,7 @@ const CreateBlindBox = () => {
             <p className="title-product">VND</p>
           </div>
 
-          <p className="title-product">Stock:</p>
+          <p className="title-product">Số lượng:</p>
           <input
             name="stock"
             type="number"
@@ -344,7 +344,7 @@ const CreateBlindBox = () => {
             placeholder="0"
           />
 
-          <p className="title-product">Status:</p>
+          <p className="title-product">Trạng thái:</p>
           <select
             name="status"
             value={form.status}
