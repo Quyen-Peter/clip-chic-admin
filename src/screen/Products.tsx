@@ -56,30 +56,30 @@ const Products = () => {
     <div className="container">
       <div className="header">
         <div className="header-flex">
-          <h2>Product Catalog</h2>
+          <h2>Danh mục sản phẩm</h2>
           <button
             className="add-more-bnt"
             onClick={() => navigate("/CreateProduct")}
           >
-            <h2>Add product</h2>
+            <h2>+ Thêm sản phẩm</h2>
           </button>
         </div>
 
         <div className="header-product">
-          <p>Products currently available in the system</p>
-          <p className="header-product-show">
+          <p>Sản phẩm hiện có trong hệ thống</p>
+          {/* <p className="header-product-show">
             Showing {products.length} products
-          </p>
+          </p> */}
         </div>
       </div>
 
       <div className="product-list">
         <div className="product-header">
-          <span className="product-header-image">Image</span>
-          <span className="product-header-name">Product</span>
-          <span className="product-header-price">Price</span>
-          <span className="product-header-quantity">Stock</span>
-          <span className="product-header-action">Actions</span>
+          <span className="product-header-image">Ảnh</span>
+          <span className="product-header-name">Thông tin</span>
+          <span className="product-header-price">Giá</span>
+          <span className="product-header-quantity">Số lượng còn</span>
+          <span className="product-header-action"></span>
         </div>
         {isLoading && (
           <div className="product-feedback">Loading products...</div>
@@ -97,7 +97,7 @@ const Products = () => {
             <span className="product-name">
               {product.title}
               <span className="product-description">
-                {product.collectionName ? `Collection: ${product.collectionName}` : ""}
+                {product.collectionName ? `${product.collectionName}` : ""}
                 {product.collectionName && product.description ? " · " : ""}
                 {product.description || "No description"}
               </span>
@@ -106,9 +106,6 @@ const Products = () => {
                   {product.status}
                 </span>
               )}
-              <span className="product-meta">
-                Created: {formatCreatedDate(product.createDate)}
-              </span>
             </span>
             <span className="product-price">
               {formatPrice(product.price)}

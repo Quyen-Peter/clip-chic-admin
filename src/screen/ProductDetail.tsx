@@ -207,11 +207,11 @@ const ProductDetail = () => {
     <form className="container-product-detail" onSubmit={handleSubmit}>
       <div className="bnt-container">
         <button type="button" onClick={() => navigate("/Products")} className="bnt-back">
-          Back
+          Thoát
         </button>
         <div className="bnt-edit-delete">
           <button className="edit-bnt" type="submit" disabled={isSaving || isLoading}>
-            {isSaving ? "Saving..." : "Save"}
+            {isSaving ? "Saving..." : "Tạo"}
           </button>
         </div>
       </div>
@@ -231,12 +231,12 @@ const ProductDetail = () => {
       {!isLoading && !error && product && (
         <div className="content-container-product">
           <div>
-            <p className="title-img-product">Product images</p>
+            <p className="title-img-product">Ảnh sản phẩm</p>
             {renderImages()}
           </div>
 
           <div className="right-txt-product">
-            <p className="title-product">Product name:</p>
+            <p className="title-product">Tên sản phẩm:</p>
             <input
               className="input-product-name"
               name="title"
@@ -244,14 +244,14 @@ const ProductDetail = () => {
               onChange={handleInputChange}
             />
 
-            <p className="title-product">Collection:</p>
+            <p className="title-product">Thể loại:</p>
             <select
               name="collectId"
               value={form.collectId}
               onChange={handleInputChange}
               className="product-short-input-select"
             >
-              <option value="">-- Select collection --</option>
+              <option value="">-- Chọn thể loại --</option>
               {collections.map((collection) => (
                 <option key={collection.id} value={collection.id}>
                   {collection.name}
@@ -259,9 +259,9 @@ const ProductDetail = () => {
               ))}
             </select>
 
-            <p className="title-product">Collection description:</p>
+            <p className="title-product">Mô tả thể loại:</p>
             <textarea
-              className="input-product-discription readonly-textarea"
+              className="input-product-discription "
               readOnly
               value={
                 collections.find(
@@ -270,15 +270,15 @@ const ProductDetail = () => {
               }
             />
 
-            <p className="title-product">Description:</p>
+            <p className="title-product">Mô tả sản phẩm:</p>
             <textarea
-              className="input-product-discription"
+              className="input-product-discription readonly-textarea"
               name="descript"
               value={form.descript}
               onChange={handleInputChange}
             />
 
-            <p className="title-product">Price:</p>
+            <p className="title-product">Giá:</p>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <input
                 className="product-short-input"
@@ -291,11 +291,11 @@ const ProductDetail = () => {
               />
               <p className="title-product">VND</p>
               <span className="product-feedback">
-                Current: {formatPrice(product.price)}
+                Hiện hành: {formatPrice(product.price)}
               </span>
             </div>
 
-            <p className="title-product">Stock:</p>
+            <p className="title-product">Số lượng kho:</p>
             <input
               className="product-short-input"
               name="stock"
@@ -305,7 +305,7 @@ const ProductDetail = () => {
               min="0"
             />
 
-            <p className="title-product">Status:</p>
+            <p className="title-product">trạng thái:</p>
             <select
               className="product-short-input-select"
               name="status"
@@ -317,7 +317,7 @@ const ProductDetail = () => {
               <option value="pending">Pending</option>
             </select>
 
-            <p className="title-product">Create date:</p>
+            <p className="title-product">Ngày tạo:</p>
             <input
               className="product-short-input"
               name="createDate"

@@ -124,7 +124,7 @@ const mapOrderLines = (order: BackendOrder): OrderProductLine[] =>
 
 const mapOrderBase = (order: BackendOrder) => {
   const details = mapOrderLines(order);
-  const subtotal = details.reduce((sum, line) => sum + line.total, 0);
+  const subtotal = Number(order.totalPrice ?? 0);
   const shipPrice = Number(order.shipPrice ?? 0);
   const payPrice = Number(order.payPrice ?? subtotal + shipPrice);
 
@@ -132,7 +132,7 @@ const mapOrderBase = (order: BackendOrder) => {
     id: order.id,
     customer: getOrderCustomer(order),
     date: getOrderDate(order),
-    total: Number(order.totalPrice ?? subtotal),
+    total: subtotal,
     products: details.reduce((sum, line) => sum + line.quantity, 0),
     status: order.status ?? undefined,
     shipPrice,

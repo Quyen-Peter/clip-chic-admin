@@ -6,7 +6,7 @@ export const getOrderStatus = (status?: string) => {
 
   switch (status.toLowerCase()) {
     case "pending":
-      return { text: "đang chờ xử lý", className: "status pending" };
+      return { text: "chưa xử lý", className: "status pending" };
     case "payment":
       return { text: "đang chờ xử lý", className: "status payment" };
     case "processing":

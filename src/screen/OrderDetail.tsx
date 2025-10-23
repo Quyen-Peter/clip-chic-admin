@@ -8,25 +8,17 @@ import {
   updateOrderStatus,
 } from "../services/orderService";
 
-const STATUS_OPTIONS = ["pending", "processing", "shipped", "completed", "cancelled"];
+const STATUS_OPTIONS = [
+  { value: "payment", label: "Đang chờ xử lý" },
+  { value: "processing", label: "Đã xác nhận (đang chờ vận chuyển)" },
+  { value: "shipping", label: "Đang giao hàng" },
+  { value: "delivered", label: "Giao hàng thành công" },
+  { value: "cancelled", label: "Đã hủy" },
+  { value: "refunded", label: "Đã hoàn tiền" },
+  { value: "returned", label: "Đã trả hàng" },
+  { value: "failed", label: "Thanh toán thất bại" },
+];
 
-const mapStatusToStep = (
-  status?: string
-): "ToPay" | "ToShip" | "Shipping" | "Delivered" => {
-  switch ((status ?? "").toLowerCase()) {
-    case "pending":
-      return "ToPay";
-    case "processing":
-      return "ToShip";
-    case "shipped":
-      return "Shipping";
-    case "completed":
-    case "delivered":
-      return "Delivered";
-    default:
-      return "ToPay";
-  }
-};
 
 const formatCurrency = (value?: number | null) => {
   const numeric = Number(value ?? 0);
@@ -39,9 +31,7 @@ const formatCurrency = (value?: number | null) => {
 const formatDateTime = (value?: string) => {
   if (!value) return "N/A";
   const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? "N/A"
-    : date.toLocaleString("vi-VN");
+  return Number.isNaN(date.getTime()) ? "N/A" : date.toLocaleString("vi-VN");
 };
 
 const OrderDetail = () => {
@@ -110,9 +100,7 @@ const OrderDetail = () => {
     setUpdateFeedback(null);
     try {
       await updateOrderStatus(order.id, status);
-      setOrder((prev) =>
-        prev ? { ...prev, status } : prev
-      );
+      setOrder((prev) => (prev ? { ...prev, status } : prev));
       setUpdateFeedback("Status updated successfully.");
     } catch (err) {
       const message =
@@ -125,15 +113,13 @@ const OrderDetail = () => {
 
   return (
     <div className="order-detail-container">
-      <div className="order-detail-header">
-        <button className="back-button" onClick={() => navigate("/Orders")}>
-          {"<-"} Back
+       <button className="back-button" onClick={() => navigate("/Orders")}>
+          {"<-"} Danh sách các đơn hàng
         </button>
+      <div className="order-detail-header">
         {order && (
           <div className="order-info-summary">
-            <h3 className="order-id">Order #{order.id}</h3>
-            <p>Created at: {formatDateTime(order.date)}</p>
-            <p>Customer: {order.customer}</p>
+            <h3 className="order-id">Mã đơn hàng: #{order.id}</h3>
           </div>
         )}
         <div className="status-update">
@@ -141,19 +127,20 @@ const OrderDetail = () => {
             value={status}
             onChange={(event) => setStatus(event.target.value)}
           >
-            <option value="">-- Select status --</option>
+            <option value="">-- Chọn trạng thái --</option>
             {STATUS_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {option}
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </select>
+
           <button
             type="button"
             onClick={handleUpdateStatus}
             disabled={isUpdatingStatus || !order}
           >
-            {isUpdatingStatus ? "Updating..." : "Update status"}
+            {isUpdatingStatus ? "Updating..." : "Cập nhật"}
           </button>
           {updateFeedback && (
             <span
@@ -174,19 +161,23 @@ const OrderDetail = () => {
 
       {order && !isLoading && !error && (
         <>
-          <div>
-           <OrderSteps status={(order.status ?? "pending") as any} />
+          <div style={{ marginBottom: "20px", marginTop: "50px" }}>
+            <OrderSteps status={(order.status) as any} />
           </div>
 
           <div className="order-detail-content">
-            <h3 className="product-list-order">Products</h3>
+            <h3 className="product-list-order">Danh sách sản phẩm</h3>
             <div className="product-items-order">
               {order.details.map((product) => (
                 <div className="product-item-order" key={product.id}>
                   {product.images && product.images.length > 0 && (
                     <div className="product-images">
-                      {product.images.map((src, idx) => (
-                        <img key={idx} src={src} alt={`${product.title} ${idx + 1}`} />
+                      {product.images.slice(0, 1).map((src, idx) => (
+                        <img
+                          key={idx}
+                          src={src}
+                          alt={`${product.title} ${idx + 1}`}
+                        />
                       ))}
                     </div>
                   )}
@@ -199,13 +190,13 @@ const OrderDetail = () => {
                     </div>
 
                     <p className="product-quantity">
-                      Quantity: {product.quantity}
+                      Số lượng: {product.quantity}
                     </p>
                     <p className="product-price">
-                      Unit price: {formatCurrency(product.price)}
+                      Giá sản phẩm: {formatCurrency(product.price)}
                     </p>
                     <p className="product-price">
-                      Line total: {formatCurrency(product.total)}
+                      Tổng giá: {formatCurrency(product.total)}
                     </p>
                   </div>
                 </div>
@@ -214,37 +205,35 @@ const OrderDetail = () => {
           </div>
 
           <div className="shipping-address">
-            <h3 className="shipping-address-title">Shipping information</h3>
+            <h3 className="shipping-address-title">Thông tin giao hàng</h3>
             <div className="address-info-border">
               <div className="name-phone">
-                <p>Name:</p>
+                <p>Tên người nhận:</p>
                 <p className="content-name-info">
                   {order.customer} | {order.phone ?? "N/A"}
                 </p>
               </div>
               <div className="address-detail">
-                <p>Address:</p>
-                <p className="content-address-info">
-                  {order.address ?? "N/A"}
-                </p>
+                <p>Địa chỉ giao hàng:</p>
+                <p className="content-address-info">{order.address ?? "N/A"}</p>
               </div>
             </div>
           </div>
 
           <div className="payment-method-container">
-            <h3 className="payment-method">Payment summary</h3>
+            <h3 className="payment-method">Tiền thanh toán</h3>
             <div className="total-info-border">
               <div className="subtotal">
-                <p>Subtotal:</p>
+                <p>Ước tính:</p>
                 <p>{formatCurrency(order.subtotal)}</p>
               </div>
               <div className="shipping-charge">
-                <p>Shipping:</p>
+                <p>Phí vận chuyển:</p>
                 <p>{formatCurrency(order.shipPrice)}</p>
               </div>
               <div className="line-order-detail-payment"></div>
               <div className="total">
-                <p>Total payable</p>
+                <p>Tổng thanh toán</p>
                 <p>{formatCurrency(order.payPrice)}</p>
               </div>
             </div>

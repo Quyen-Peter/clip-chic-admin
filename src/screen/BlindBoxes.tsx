@@ -51,27 +51,27 @@ const BlindBoxes = () => {
   return (
     <div className="blindbox-container">
       <div className="blindbox-header">
-        <h2>Blindbox Catalog</h2>
+        <h2>Danh mục blindbox</h2>
         <button
           className="blindbox-add-button"
           onClick={() => navigate("/CreateBlindBox")}
         >
-          <h2>Create blindbox</h2>
+          <h2>+ Thêm sản phẩm</h2>
         </button>
       </div>
 
       <div className="blindbox-subheader">
-        <p>Blindboxes currently available in the system</p>
-        <p>Showing {blindBoxes.length} blindboxes</p>
+        <p>blindbox hiện có sẵn trong hệ thống</p>
+        {/* <p>Showing {blindBoxes.length} blindboxes</p> */}
       </div>
 
       <div className="blindbox-list">
         <div className="blindbox-header-row">
-          <span>Image</span>
-          <span>Blindbox</span>
-          <span>Price</span>
-          <span>Stock</span>
-          <span>Actions</span>
+          <span>Ảnh</span>
+          <span>Thông tin</span>
+          <span>Giá</span>
+          <span>Số lượng còn</span>
+          <span></span>
         </div>
 
         {isLoading && (
@@ -92,7 +92,7 @@ const BlindBoxes = () => {
               {blindBox.name}
               <span>
                 {blindBox.collectionName
-                  ? `Collection: ${blindBox.collectionName}`
+                  ? `${blindBox.collectionName}`
                   : ""}
                 {blindBox.collectionName && blindBox.description ? " · " : ""}
                 {blindBox.description || "No description"}

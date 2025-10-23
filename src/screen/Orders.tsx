@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import "../css/Order.css";
 import { useNavigate } from "react-router-dom";
 import { fetchOrders, OrderListItem } from "../services/orderService";
+import { getOrderStatus } from "../utils/orderStatus";
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<OrderListItem[]>([]);
@@ -42,7 +43,9 @@ const Orders: React.FC = () => {
 
   const headingSummary = useMemo(() => {
     if (orders.length === 0) return "No orders available";
-    return `Showing 1-${Math.min(10, orders.length)} of ${orders.length} orders`;
+    return `Showing 1-${Math.min(10, orders.length)} of ${
+      orders.length
+    } orders`;
   }, [orders]);
 
   const formatDate = (value: string) => {
@@ -66,14 +69,14 @@ const Orders: React.FC = () => {
         <h2>Quản lý các đơn đặt hàng</h2>
         <div className="header-order-flex">
           <p>Đơn hàng hiện đang được ghi lại trong hệ thống</p>
-          <p>{headingSummary}</p>
+          {/* <p>{headingSummary}</p> */}
         </div>
       </div>
 
       <table className="order-table">
         <thead>
           <tr>
-            <th>MÃ đơn hàng</th>
+            <th>Mã đơn hàng</th>
             <th>Khách hàng</th>
             <th>Ngày đặt</th>
             <th>Giá đơn</th>
@@ -105,7 +108,10 @@ const Orders: React.FC = () => {
                 {formatCurrency(order.payPrice)} ({order.products}{" "}
                 {order.products > 1 ? "Products" : "Product"})
               </td>
-              <td>{order.status ?? "N/A"}</td>
+              {(() => {
+                const { text, className } = getOrderStatus(order.status);
+                return <td className={className}>{text}</td>;
+              })()}
               <td className="action">
                 <button
                   type="button"

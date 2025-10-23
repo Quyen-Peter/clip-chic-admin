@@ -9,9 +9,7 @@ import {
   CollectionSummary,
 } from "../services/collectionService";
 
-type FeedbackState =
-  | { type: "success" | "error"; message: string }
-  | null;
+type FeedbackState = { type: "success" | "error"; message: string } | null;
 
 type ImageSlot = {
   file: File | null;
@@ -21,7 +19,10 @@ type ImageSlot = {
 const IMAGE_SLOT_COUNT = 5;
 
 const createInitialImageSlots = (): ImageSlot[] =>
-  Array.from({ length: IMAGE_SLOT_COUNT }, () => ({ file: null, preview: null }));
+  Array.from({ length: IMAGE_SLOT_COUNT }, () => ({
+    file: null,
+    preview: null,
+  }));
 
 const getInitialFormState = (defaultCollectId?: number) => ({
   collectId: defaultCollectId ? String(defaultCollectId) : "",
@@ -37,8 +38,9 @@ const CreateProduct = () => {
   const navigate = useNavigate();
   const previewUrlsRef = React.useRef<string[]>([]);
 
-  const [images, setImages] =
-    React.useState<ImageSlot[]>(createInitialImageSlots);
+  const [images, setImages] = React.useState<ImageSlot[]>(
+    createInitialImageSlots
+  );
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [feedback, setFeedback] = React.useState<FeedbackState>(null);
   const [collections, setCollections] = React.useState<CollectionSummary[]>([]);
@@ -55,7 +57,9 @@ const CreateProduct = () => {
   const revokePreview = React.useCallback((url: string | null) => {
     if (!url) return;
     URL.revokeObjectURL(url);
-    previewUrlsRef.current = previewUrlsRef.current.filter((value) => value !== url);
+    previewUrlsRef.current = previewUrlsRef.current.filter(
+      (value) => value !== url
+    );
   }, []);
 
   React.useEffect(() => {
@@ -76,9 +80,7 @@ const CreateProduct = () => {
         setCollections(data);
         if (data.length > 0) {
           setForm((prev) =>
-            prev.collectId
-              ? prev
-              : { ...prev, collectId: String(data[0].id) }
+            prev.collectId ? prev : { ...prev, collectId: String(data[0].id) }
           );
         }
       } catch (err) {
@@ -182,7 +184,11 @@ const CreateProduct = () => {
         {!slot.preview && <span className="placeholder">No image</span>}
 
         {slot.preview && (
-          <img src={slot.preview} alt={`preview-${index + 1}`} className="preview-img" />
+          <img
+            src={slot.preview}
+            alt={`preview-${index + 1}`}
+            className="preview-img"
+          />
         )}
 
         <div className="overlay">
@@ -254,7 +260,10 @@ const CreateProduct = () => {
       .map((slot) => slot.file as File);
 
     if (selectedImages.length === 0) {
-      setFeedback({ type: "error", message: "Please upload at least one product image." });
+      setFeedback({
+        type: "error",
+        message: "Please upload at least one product image.",
+      });
       return;
     }
 
@@ -294,7 +303,7 @@ const CreateProduct = () => {
           onClick={() => navigate("/Products")}
           className="bnt-back"
         >
-          Back
+          Thoát
         </button>
         <div className="bnt-edit-delete">
           <button type="submit" className="edit-bnt" disabled={isSubmitting}>
@@ -305,24 +314,25 @@ const CreateProduct = () => {
 
       <div className="content-container-product">
         <div>
-          <p className="title-img-product">Product images</p>
+          <p className="title-img-product">Ảnh sản phẩm</p>
           <div className="container-img">
-            {[0, 1, 2, 3].map((index) => renderImageSlot(index))}
+            {[0, 1, 2].map((index) => renderImageSlot(index))}
           </div>
           <div className="container-img">
-            {[4].map((index) => renderImageSlot(index))}
+            {[3, 4].map((index) => renderImageSlot(index))}
             <div className="image-box" />
           </div>
         </div>
 
-        <div className="right-txt-product">
-          <p className="title-product">Collection:</p>
+        <div className="right-txt-product" style={{marginTop: "20px"}}>
+          <p className="title-product" style={{marginBottom: "20px"}}>Thể loại:</p>
           {collections.length > 0 ? (
             <select
               name="collectId"
               value={form.collectId}
               onChange={handleInputChange}
               className="product-short-input-select"
+              style={{marginBottom: "20px"}}
             >
               {collections.map((collection) => (
                 <option key={collection.id} value={collection.id}>
@@ -331,18 +341,14 @@ const CreateProduct = () => {
               ))}
             </select>
           ) : (
-            <div
-              className={`field-message${
-                collectionsError ? " error" : ""
-              }`}
-            >
+            <div className={`field-message${collectionsError ? " error" : ""}`}>
               {isLoadingCollections
                 ? "Loading collections..."
                 : collectionsError ?? "No collections available."}
             </div>
           )}
 
-          <p className="title-product">Product name:</p>
+          <p className="title-product" style={{marginBottom: "20px"}}>Tên sản phẩm:</p>
           <input
             name="title"
             value={form.title}
@@ -350,9 +356,10 @@ const CreateProduct = () => {
             type="text"
             className="input-product-name"
             placeholder="Enter product name"
+            style={{marginBottom: "20px"}}
           />
 
-          <p className="title-product">Description:</p>
+          <p className="title-product" style={{marginBottom: "20px"}}>mô tả:</p>
           <textarea
             name="descript"
             rows={5}
@@ -360,30 +367,33 @@ const CreateProduct = () => {
             value={form.descript}
             onChange={handleInputChange}
             placeholder="Describe the product"
+            style={{marginBottom: "20px"}}
           />
 
-          <p className="title-product">Create date:</p>
+          <p className="title-product" style={{marginBottom: "20px"}}>Ngày tạo:</p>
           <input
             name="createDate"
             type="date"
             className="product-short-input"
             value={form.createDate}
             onChange={handleInputChange}
+            style={{marginBottom: "20px"}}
           />
 
-          <p className="title-product">Status:</p>
+          <p className="title-product" style={{marginBottom: "20px"}}>Trạng thái:</p>
           <select
             name="status"
             value={form.status}
             onChange={handleInputChange}
             className="product-short-input-select"
+            style={{marginBottom: "20px"}}
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
 
-          <p className="title-product">Price:</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <p className="title-product" style={{marginBottom: "20px"}}>Price:</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }} >
             <input
               name="price"
               type="number"
@@ -397,9 +407,18 @@ const CreateProduct = () => {
             <p className="title-product">VND</p>
           </div>
 
-          <p className="title-product">Stock:</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <button type="button" onClick={() => adjustStock(-1)}>
+          <p className="title-product" style={{marginBottom: "20px"}}>Số lượng:</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" , }}>
+            <button
+              type="button"
+              onClick={() => adjustStock(-1)}
+              style={{
+                width: "40px",
+                height: "30px",
+                backgroundColor: "#ffffff",
+              }}
+              className="change-stock"
+            >
               -
             </button>
             <input
@@ -410,14 +429,25 @@ const CreateProduct = () => {
               className="product-short-input"
               style={{ width: "80px", textAlign: "center" }}
             />
-            <button type="button" onClick={() => adjustStock(1)}>
+            <button
+              type="button"
+              onClick={() => adjustStock(1)}
+              className="change-stock"
+              style={{
+                width: "40px",
+                height: "30px",
+                backgroundColor: "#ffffff",
+              }}
+            >
               +
             </button>
-            <p className="title-product">items</p>
+            <p className="title-product">Sản phẩm</p>
           </div>
 
           {feedback && (
-            <p className={`submit-feedback ${feedback.type}`}>{feedback.message}</p>
+            <p className={`submit-feedback ${feedback.type}`}>
+              {feedback.message}
+            </p>
           )}
         </div>
       </div>

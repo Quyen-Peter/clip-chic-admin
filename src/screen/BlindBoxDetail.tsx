@@ -195,11 +195,11 @@ const BlindBoxDetailScreen = () => {
           onClick={() => navigate("/BlindBoxes")}
           className="bnt-back"
         >
-          Back
+          Thoát
         </button>
         <div className="bnt-edit-delete">
           <button className="edit-bnt" type="submit" disabled={isSaving || isLoading}>
-            {isSaving ? "Saving..." : "Save"}
+            {isSaving ? "Saving..." : "lưu"}
           </button>
         </div>
       </div>
@@ -219,12 +219,12 @@ const BlindBoxDetailScreen = () => {
       {!isLoading && !error && blindBox && (
         <div className="content-container-product">
           <div>
-            <p className="title-img-product">Blindbox images</p>
+            <p className="title-img-product">Ảnh sản phẩm</p>
             {renderImages()}
           </div>
 
           <div className="right-txt-product">
-            <p className="title-product">Blindbox name:</p>
+            <p className="title-product">Tên sản phẩm:</p>
             <input
               className="input-product-name"
               name="name"
@@ -232,14 +232,14 @@ const BlindBoxDetailScreen = () => {
               onChange={handleInputChange}
             />
 
-            <p className="title-product">Collection:</p>
+            <p className="title-product">Thể loại:</p>
             <select
               name="collectId"
               value={form.collectId}
               onChange={handleInputChange}
               className="product-short-input-select"
             >
-              <option value="">-- Select collection --</option>
+              <option value="">-- Chọn thể loại --</option>
               {collections.map((collection) => (
                 <option key={collection.id} value={collection.id}>
                   {collection.name}
@@ -247,9 +247,9 @@ const BlindBoxDetailScreen = () => {
               ))}
             </select>
 
-            <p className="title-product">Collection description:</p>
+            <p className="title-product">Mô tả thể loại:</p>
             <textarea
-              className="input-product-discription readonly-textarea"
+              className="input-product-discription "
               readOnly
               value={
                 collections.find(
@@ -258,15 +258,15 @@ const BlindBoxDetailScreen = () => {
               }
             />
 
-            <p className="title-product">Description:</p>
+            <p className="title-product">Mô tả:</p>
             <textarea
-              className="input-product-discription"
+              className="input-product-discription readonly-textarea"
               name="descript"
               value={form.descript}
               onChange={handleInputChange}
             />
 
-            <p className="title-product">Price:</p>
+            <p className="title-product">Giá:</p>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <input
                 className="product-short-input"
@@ -279,11 +279,11 @@ const BlindBoxDetailScreen = () => {
               />
               <p className="title-product">VND</p>
               <span className="product-feedback">
-                Current: {formatPrice(blindBox.price)}
+                Hiện hành: {formatPrice(blindBox.price)}
               </span>
             </div>
 
-            <p className="title-product">Stock:</p>
+            <p className="title-product">số lượng:</p>
             <input
               className="product-short-input"
               name="stock"
@@ -293,7 +293,7 @@ const BlindBoxDetailScreen = () => {
               min="0"
             />
 
-            <p className="title-product">Status:</p>
+            <p className="title-product">Trạng thái:</p>
             <select
               className="product-short-input-select"
               name="status"

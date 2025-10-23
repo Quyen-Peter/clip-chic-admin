@@ -1,7 +1,6 @@
 .order-detail-container {
   height: 100vh;
   padding-right: 5%;
-  overflow-y: auto;
 }
 
 .order-detail-header {
@@ -15,10 +14,11 @@
 .back-button {
   border: none;
   background: none;
-  color: #ff8fb4;
+  color: #c1c0c0;
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
+  margin-bottom: 20px;
 }
 
 .order-info-summary h3 {
@@ -49,6 +49,7 @@
   color: #ffffff;
   cursor: pointer;
   font-weight: bold;
+  width: 150px;
 }
 
 .status-feedback {
@@ -111,11 +112,10 @@
   background-color: white;
 }
 
-/* Thông tin sản phẩm */
 .product-info-order {
   display: flex;
-  flex-direction: column;
   justify-content: center;
+  justify-content: space-between;
   gap: 4px;
   color: #173da2;
   width: 100%;
@@ -131,6 +131,15 @@
   font-weight: bold;
   color: #173da2;
   margin: 0;
+  display: -webkit-box;          
+  -webkit-box-orient: vertical;   
+  -webkit-line-clamp: 3;         
+  overflow: hidden;           
+  text-overflow: ellipsis;       
+  white-space: normal;         
+  max-width: 250px;               
+  line-height: 1.4em;             
+  height: calc(1.4em * 3);      
 }
 
 .product-name {
