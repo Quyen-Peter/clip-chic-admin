@@ -13,6 +13,9 @@ import {
 import { fetchOrders, OrderListItem } from "../services/orderService";
 import { useNavigate } from "react-router-dom";
 import { getOrderStatus } from "../utils/orderStatus";
+import { fetchDailyOrder, DailyOrderData } from "../services/dashboardService";
+import { fetchTopBlindboxes, TopBlindbox } from "../services/dashboardService";
+import { fetchTopProducts, TopProduct } from "../services/dashboardService";
 
 interface MonthlySales {
   month: number;
@@ -27,8 +30,46 @@ const Dashboard = () => {
   const [orders, setOrders] = useState<OrderListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [dailyData, setDailyData] = useState<DailyOrderData | null>(null);
+  const [topBlindboxes, setTopBlindboxes] = useState<TopBlindbox[]>([]);
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
 
   useEffect(() => {
+    const loadDailyData = async () => {
+      const token = sessionStorage.getItem("token");
+      try {
+        const data = await fetchDailyOrder(token || "");
+        setDailyData(data);
+      } catch (err) {
+        console.error("❌ Không thể tải dữ liệu thống kê hôm nay:", err);
+      }
+    };
+    loadDailyData();
+
+    // Load top blindboxes
+    const loadTopBlindboxes = async () => {
+      const token = sessionStorage.getItem("token");
+      try {
+        const data = await fetchTopBlindboxes(token || "");
+        setTopBlindboxes(data);
+      } catch (err) {
+        console.error("❌ Không thể tải danh sách top blindbox:", err);
+      }
+    };
+    loadTopBlindboxes();
+
+    // Load top products
+    const loadTopProducts = async () => {
+      const token = sessionStorage.getItem("token");
+      try {
+        const data = await fetchTopProducts(token || "");
+        setTopProducts(data);
+      } catch (err) {
+        console.error("❌ Không thể tải danh sách top sản phẩm:", err);
+      }
+    };
+    loadTopProducts();
+
     let isMounted = true;
 
     const loadOrders = async () => {
@@ -143,17 +184,21 @@ const Dashboard = () => {
       <div className="dashboard-today">
         <div className="dashboard-card">
           <span>Tổng đơn hôm nay</span>
-          <span>0</span>
+          <span>{dailyData?.countOrder}</span>
         </div>
 
         <div className="dashboard-card">
           <span>Doanh thu hôm nay</span>
-          <span>0</span>
+          <span>
+            {dailyData
+              ? dailyData.totalSales.toLocaleString("vi-VN") + " VND"
+              : "..."}
+          </span>
         </div>
 
         <div className="dashboard-card">
           <span>Số đơn hủy</span>
-          <span>0</span>
+          <span>{dailyData?.countOrderCancel}</span>
         </div>
       </div>
 
@@ -189,7 +234,7 @@ const Dashboard = () => {
                     })()}
                     <button
                       type="button"
-                     className="detail"
+                      className="detail"
                       onClick={() => handleViewDetail(order)}
                     >
                       Chi tiết →
@@ -208,13 +253,33 @@ const Dashboard = () => {
             <div className="list-header">
               <span>Top sản phẩm kẹp tóc thường bán chạy</span>
             </div>
+
             <div className="list-content scrollable">
-              {[...Array(10)].map((_, i) => (
-                <div key={i} className="list-item">
-                  <span>Kẹp tóc #{i + 1}</span>
-                  <span>{120 - i * 3} đơn</span>
-                </div>
-              ))}
+              {topProducts.length === 0 ? (
+                <p style={{ textAlign: "center", color: "#999" }}>
+                  Không có dữ liệu
+                </p>
+              ) : (
+                topProducts.map((product) => (
+                  <div key={product.id} className="list-item">
+                    <div className="list-item-info">
+                      <img
+                        src={
+                          product.images && product.images.length > 0
+                            ? product.images[0].address
+                            : "https://via.placeholder.com/60"
+                        }
+                        alt={product.name}
+                        className="list-item-image"
+                      />
+                      <span className="list-item-name">{product.name}</span>
+                    </div>
+                    <span className="list-item-quantity">
+                      {product.quantitySold} đơn
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -223,13 +288,33 @@ const Dashboard = () => {
             <div className="list-header">
               <span>Top Blindbox bán chạy</span>
             </div>
+
             <div className="list-content scrollable">
-              {[...Array(10)].map((_, i) => (
-                <div key={i} className="list-item">
-                  <span>Blindbox #{i + 1}</span>
-                  <span>{90 - i * 2} đơn</span>
-                </div>
-              ))}
+              {topBlindboxes.length === 0 ? (
+                <p style={{ textAlign: "center", color: "#999" }}>
+                  Không có dữ liệu
+                </p>
+              ) : (
+                topBlindboxes.map((box) => (
+                  <div key={box.id} className="list-item">
+                    <div className="list-item-info">
+                      <img
+                        src={
+                          box.images && box.images.length > 0
+                            ? box.images[0].address
+                            : "https://via.placeholder.com/60"
+                        }
+                        alt={box.name}
+                        className="list-item-image"
+                      />
+                      <span className="list-item-name">{box.name}</span>
+                    </div>
+                    <span className="list-item-quantity">
+                      {box.quantitySold} đơn
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

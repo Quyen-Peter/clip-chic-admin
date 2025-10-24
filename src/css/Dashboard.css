@@ -103,10 +103,35 @@
 .list-item {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px dashed #ffd6e9;
-  padding: 6px 0;
-  font-size: 14px;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid #f1f1f1;
 }
+
+.list-item-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.list-item-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.list-item-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.list-item-quantity {
+  font-weight: 600;
+  color: #173da2;
+}
+
 
 .list-item span:first-child {
   color: #173da2;
