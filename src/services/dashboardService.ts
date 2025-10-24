@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5222";
+const API_URL = "https://clipnchic-cnaeasa8eyftfqcg.southeastasia-01.azurewebsites.net";
 
 export interface DailyOrderData {
   countOrder: number;
