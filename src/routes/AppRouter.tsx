@@ -3,7 +3,7 @@ import Dashboard from "../screen/Dashboard";
 import Orders from "../screen/Orders";   
 import Products from "../screen/Products";
 import Customers from "../screen/Customers";
-import Shipping from "../screen/Shipping";
+import Orther from "../screen/Orther";
 import User from "../screen/User";
 import Voucher from "../screen/Voucher";
 import ProductDetail from "../screen/ProductDetail";
@@ -23,7 +23,7 @@ const AppRouter = () => {
             <Route path="/Customers" element={<Customers />} />
             <Route path="/Voucher" element={<Voucher />} />
             <Route path="/User" element={<User />} />
-            <Route path="/Shipping" element={<Shipping />} />
+            <Route path="/Orther" element={<Orther />} />
             <Route path="/ProductDetail/:id" element={<ProductDetail />} />
             <Route path="/BlindBoxes" element={<BlindBoxes />} />
             <Route path="/BlindBoxDetail/:id" element={<BlindBoxDetail />} />

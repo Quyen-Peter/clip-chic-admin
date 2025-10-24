@@ -1,6 +1,6 @@
 
 
-const Shipping =() =>{
+const Orther =() =>{
     return(
         <div>
             <a>Shipping</a>
@@ -8,4 +8,4 @@ const Shipping =() =>{
     )
 }
 
-export default Shipping;
+export default Orther;

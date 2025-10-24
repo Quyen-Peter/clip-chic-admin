@@ -7,14 +7,14 @@ const Sidebar = () => {
   const location = useLocation();
   
   const menuItems = [
-    { path: "/Dashboard", label: "Dashboard" },
-    { path: "/Orders", label: "Orders" },
-    { path: "/Products", label: "Products" },
+    { path: "/Dashboard", label: "Trang chủ" },
+    { path: "/Orders", label: "Đơn hàng" },
+    { path: "/Products", label: "Sản phẩm" },
     { path: "/BlindBoxes", label: "Blindboxes" },
-    { path: "/Customers", label: "Customers" },
+    { path: "/Customers", label: "Thiết kế" },
     { path: "/Voucher", label: "Promotion / Voucher" },
-    { path: "/User", label: "User" },
-    { path: "/Shipping", label: "Shipping & Payment" }
+    { path: "/User", label: "Người dùng" },
+    { path: "/Orther", label: "Khác" }
   ];
 
   return (
