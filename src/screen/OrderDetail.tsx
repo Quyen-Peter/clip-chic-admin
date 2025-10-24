@@ -111,6 +111,11 @@ const OrderDetail = () => {
     }
   };
 
+  const calculatedSubtotal = React.useMemo(() => {
+    if (!order || !order.details) return 0;
+    return order.details.reduce((sum, product) => sum + (product.total || 0), 0);
+  }, [order?.details]);
+
   return (
     <div className="order-detail-container">
        <button className="back-button" onClick={() => navigate("/Orders")}>
@@ -225,7 +230,7 @@ const OrderDetail = () => {
             <div className="total-info-border">
               <div className="subtotal">
                 <p>Ước tính:</p>
-                <p>{formatCurrency(order.subtotal)}</p>
+                <p>{formatCurrency(calculatedSubtotal)}</p>
               </div>
               <div className="shipping-charge">
                 <p>Phí vận chuyển:</p>
