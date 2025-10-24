@@ -99,7 +99,7 @@ const mapOrderLines = (order: BackendOrder): OrderProductLine[] =>
       ? detail.product?.price
       : detail.blindBox?.price;
     const unitPrice = Number(priceSource ?? 0);
-    const lineTotal = Number(detail.price ?? 0);
+    const lineTotal = Number(detail.price) || (quantity * unitPrice);
 
     const images = (isProduct
       ? (detail.product?.images ?? [])
