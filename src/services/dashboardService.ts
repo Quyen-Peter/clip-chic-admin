@@ -20,6 +20,15 @@ export interface TopProduct {
   images: { id: number; name: string; address: string }[];
 }
 
+export interface YearlySalesResponse {
+  year: number;
+  monthlySales: {
+    month: number;
+    ordersCount: number;
+    salesTotal: number;
+  }[];
+}
+
 export const fetchDailyOrder = async (token?: string): Promise<DailyOrderData> => {
   try {
     const res = await fetch(`${API_URL}/api/Order/DailyOrder`, {
@@ -96,6 +105,32 @@ export const fetchTopProducts = async (token?: string): Promise<TopProduct[]> =>
     return await res.json();
   } catch (err) {
     console.error("❌ Lỗi khi lấy top sản phẩm:", err);
+    throw err;
+  }
+};
+
+
+export const fetchYearlySalesSummary = async (
+  year: number
+): Promise<YearlySalesResponse> => {
+  try {
+    const res = await fetch(
+      `${API_URL}/api/Order/YearlySalesSummary?year=${year}`,
+      {
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+        },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error("❌ Lỗi khi lấy dữ liệu doanh thu năm:", err);
     throw err;
   }
 };

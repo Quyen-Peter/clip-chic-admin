@@ -16,12 +16,15 @@ import { getOrderStatus } from "../utils/orderStatus";
 import { fetchDailyOrder, DailyOrderData } from "../services/dashboardService";
 import { fetchTopBlindboxes, TopBlindbox } from "../services/dashboardService";
 import { fetchTopProducts, TopProduct } from "../services/dashboardService";
+import { fetchYearlySalesSummary } from "../services/dashboardService";
 
 interface MonthlySales {
   month: number;
   ordersCount: number;
   salesTotal: number;
 }
+
+
 const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [salesData, setSalesData] = useState<MonthlySales[]>([]);
@@ -41,7 +44,7 @@ const Dashboard = () => {
         const data = await fetchDailyOrder(token || "");
         setDailyData(data);
       } catch (err) {
-        console.error("❌ Không thể tải dữ liệu thống kê hôm nay:", err);
+        console.error("Không thể tải dữ liệu thống kê hôm nay:", err);
       }
     };
     loadDailyData();
@@ -53,7 +56,7 @@ const Dashboard = () => {
         const data = await fetchTopBlindboxes(token || "");
         setTopBlindboxes(data);
       } catch (err) {
-        console.error("❌ Không thể tải danh sách top blindbox:", err);
+        console.error("Không thể tải danh sách top blindbox:", err);
       }
     };
     loadTopBlindboxes();
@@ -65,7 +68,7 @@ const Dashboard = () => {
         const data = await fetchTopProducts(token || "");
         setTopProducts(data);
       } catch (err) {
-        console.error("❌ Không thể tải danh sách top sản phẩm:", err);
+        console.error("Không thể tải danh sách top sản phẩm:", err);
       }
     };
     loadTopProducts();
@@ -100,12 +103,6 @@ const Dashboard = () => {
     };
   }, []);
 
-  const headingSummary = useMemo(() => {
-    if (orders.length === 0) return "No orders available";
-    return `Showing 1-${Math.min(10, orders.length)} of ${
-      orders.length
-    } orders`;
-  }, [orders]);
 
   const formatDate = (value: string) => {
     if (!value) return "N/A";
@@ -123,53 +120,16 @@ const Dashboard = () => {
   };
 
   const fetchSalesData = async (year: number) => {
-    setIsLoading(true);
-    try {
-      // tạo dữ liệu giả cho mỗi năm (thay đổi chút để nhìn khác nhau)
-      let mockData: MonthlySales[] = [];
-
-      if (year === 2023) {
-        mockData = Array.from({ length: 12 }, (_, i) => ({
-          month: i + 1,
-          ordersCount: 80 + i * 2,
-          salesTotal: 30000000 + i * 2500000,
-        }));
-      } else if (year === 2024) {
-        mockData = Array.from({ length: 12 }, (_, i) => ({
-          month: i + 1,
-          ordersCount: 100 + i * 3,
-          salesTotal: 40000000 + i * 2800000,
-        }));
-      } else if (year === 2025) {
-        mockData = [
-          { month: 1, ordersCount: 120, salesTotal: 52000000 },
-          { month: 2, ordersCount: 95, salesTotal: 41000000 },
-          { month: 3, ordersCount: 150, salesTotal: 68000000 },
-          { month: 4, ordersCount: 80, salesTotal: 33000000 },
-          { month: 5, ordersCount: 140, salesTotal: 61000000 },
-          { month: 6, ordersCount: 175, salesTotal: 72000000 },
-          { month: 7, ordersCount: 130, salesTotal: 57000000 },
-          { month: 8, ordersCount: 160, salesTotal: 75000000 },
-          { month: 9, ordersCount: 115, salesTotal: 49000000 },
-          { month: 10, ordersCount: 180, salesTotal: 80000000 },
-          { month: 11, ordersCount: 105, salesTotal: 42000000 },
-          { month: 12, ordersCount: 155, salesTotal: 69000000 },
-        ];
-      } else if (year === 2026) {
-        mockData = Array.from({ length: 12 }, (_, i) => ({
-          month: i + 1,
-          ordersCount: 150 + i * 4,
-          salesTotal: 60000000 + i * 3000000,
-        }));
-      }
-
-      setSalesData(mockData);
-    } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu doanh thu:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  try {
+    const data = await fetchYearlySalesSummary(year);
+    setSalesData(data.monthlySales);
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu doanh thu năm:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchSalesData(selectedYear);
