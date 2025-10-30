@@ -22,3 +22,4 @@ export async function fetchCollections(): Promise<CollectionSummary[]> {
   const collections = await apiRequest<BackendCollection[]>("Collection/GetAll");
   return collections.map(mapCollection);
 }
+
