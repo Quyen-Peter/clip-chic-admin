@@ -24,7 +24,7 @@ const Sidebar = () => {
         {menuItems.map((item, index) => (
           <div key={index} className="sidebar-item">
             <img 
-              src={icon} 
+              src={icon} alt={item.label || "icon"}
               className={`sidebar-icon ${location.pathname === item.path ? 'active' : ''}`} 
             />
             <NavLink 
