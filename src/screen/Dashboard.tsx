@@ -17,13 +17,13 @@ import { fetchDailyOrder, DailyOrderData } from "../services/dashboardService";
 import { fetchTopBlindboxes, TopBlindbox } from "../services/dashboardService";
 import { fetchTopProducts, TopProduct } from "../services/dashboardService";
 import { fetchYearlySalesSummary } from "../services/dashboardService";
+import { fetchMonthlySalesOrder } from "../services/dashboardService";
 
 interface MonthlySales {
   month: number;
   ordersCount: number;
   salesTotal: number;
 }
-
 
 const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState<number>(2025);
@@ -36,8 +36,25 @@ const Dashboard = () => {
   const [dailyData, setDailyData] = useState<DailyOrderData | null>(null);
   const [topBlindboxes, setTopBlindboxes] = useState<TopBlindbox[]>([]);
   const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
+  const [monthlyData, setMonthlyData] = useState({
+    orderThisMonth: 0,
+    orderLastMonth: 0,
+    orderFailedThisMonth: 0,
+    orderFailedLastMonth: 0,
+  });
 
   useEffect(() => {
+    const loadMonthlyData = async () => {
+      try {
+        const data = await fetchMonthlySalesOrder();
+        setMonthlyData(data);
+      } catch (err) {
+        console.error("Không thể tải dữ liệu thống kê tháng:", err);
+      }
+    };
+
+    loadMonthlyData();
+
     const loadDailyData = async () => {
       const token = sessionStorage.getItem("token");
       try {
@@ -103,7 +120,6 @@ const Dashboard = () => {
     };
   }, []);
 
-
   const formatDate = (value: string) => {
     if (!value) return "N/A";
     const date = new Date(value);
@@ -120,16 +136,16 @@ const Dashboard = () => {
   };
 
   const fetchSalesData = async (year: number) => {
-  setIsLoading(true);
-  try {
-    const data = await fetchYearlySalesSummary(year);
-    setSalesData(data.monthlySales);
-  } catch (error) {
-    console.error("Lỗi khi lấy dữ liệu doanh thu năm:", error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    setIsLoading(true);
+    try {
+      const data = await fetchYearlySalesSummary(year);
+      setSalesData(data.monthlySales);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu doanh thu năm:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchSalesData(selectedYear);
@@ -138,6 +154,14 @@ const Dashboard = () => {
   const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedYear(Number(e.target.value));
   };
+
+  const calcChange = (current: number, previous: number): string => {
+    if (previous === 0) return "0%";
+    const change = ((current - previous) / previous) * 100;
+    return `${change.toFixed(1)}%`;
+  };
+
+  const isIncrease = (current: number, previous: number) => current >= previous;
 
   return (
     <div>
@@ -177,9 +201,19 @@ const Dashboard = () => {
             </div>
 
             <div className="order-body scrollable">
-              {orders
-                .filter((order) => order.status === "payment")
-                .map((order) => (
+              {(() => {
+                const filteredOrders = orders.filter(
+                  (order) => order.status === "payment"
+                );
+
+                if (filteredOrders.length === 0) {
+                  return (
+                    <p style={{ textAlign: "center", color: "#999" }}>
+                      Không có đơn hàng nào
+                    </p>
+                  );
+                }
+                return filteredOrders.map((order) => (
                   <div key={order.id} className="order-row">
                     <span>#{order.id}</span>
                     <span>{order.customer}</span>
@@ -190,7 +224,9 @@ const Dashboard = () => {
                     </span>
                     {(() => {
                       const { text, className } = getOrderStatus(order.status);
-                      return <span className="status">{text}</span>;
+                      return (
+                        <span className={`status ${className}`}>{text}</span>
+                      );
                     })()}
                     <button
                       type="button"
@@ -199,9 +235,9 @@ const Dashboard = () => {
                     >
                       Chi tiết →
                     </button>
-                    {/* <span className="detail">Chi tiết →</span> */}
                   </div>
-                ))}
+                ));
+              })()}
             </div>
           </div>
         </div>
@@ -284,13 +320,25 @@ const Dashboard = () => {
         <div className="month-card">
           <div className="month-row">
             <span>Tổng đơn tháng này</span>
-            <span>0</span>
+            <span>{monthlyData.orderThisMonth}</span>
           </div>
           <div className="month-row">
             <span>Tổng đơn tháng trước</span>
-            <span>0</span>
+            <span>{monthlyData.orderLastMonth}</span>
           </div>
-          <span className="change up">Tăng 10% so với tháng trước</span>
+          <span
+            className={`change ${
+              isIncrease(monthlyData.orderThisMonth, monthlyData.orderLastMonth)
+                ? "up"
+                : "down"
+            }`}
+          >
+            {isIncrease(monthlyData.orderThisMonth, monthlyData.orderLastMonth)
+              ? "Tăng"
+              : "Giảm"}{" "}
+            {calcChange(monthlyData.orderThisMonth, monthlyData.orderLastMonth)}{" "}
+            so với tháng trước
+          </span>
         </div>
 
         <div className="month-card">
@@ -308,13 +356,34 @@ const Dashboard = () => {
         <div className="month-card">
           <div className="month-row">
             <span>Số đơn hủy tháng này</span>
-            <span>0</span>
+            <span>{monthlyData.orderFailedThisMonth}</span>
           </div>
           <div className="month-row">
             <span>Số đơn hủy tháng trước</span>
-            <span>0</span>
+            <span>{monthlyData.orderFailedLastMonth}</span>
           </div>
-          <span className="change down">Giảm 5% so với tháng trước</span>
+          <span
+            className={`change ${
+              isIncrease(
+                monthlyData.orderFailedThisMonth,
+                monthlyData.orderFailedLastMonth
+              )
+                ? "up"
+                : "down"
+            }`}
+          >
+            {isIncrease(
+              monthlyData.orderFailedThisMonth,
+              monthlyData.orderFailedLastMonth
+            )
+              ? "Tăng"
+              : "Giảm"}{" "}
+            {calcChange(
+              monthlyData.orderFailedThisMonth,
+              monthlyData.orderFailedLastMonth
+            )}{" "}
+            so với tháng trước
+          </span>
         </div>
       </div>
 

@@ -19,7 +19,6 @@ const STATUS_OPTIONS = [
   { value: "failed", label: "Thanh toán thất bại" },
 ];
 
-
 const formatCurrency = (value?: number | null) => {
   const numeric = Number(value ?? 0);
   if (Number.isNaN(numeric)) {
@@ -113,14 +112,17 @@ const OrderDetail = () => {
 
   const calculatedSubtotal = React.useMemo(() => {
     if (!order || !order.details) return 0;
-    return order.details.reduce((sum, product) => sum + (product.total || 0), 0);
+    return order.details.reduce(
+      (sum, product) => sum + (product.total || 0),
+      0
+    );
   }, [order?.details]);
 
   return (
     <div className="order-detail-container">
-       <button className="back-button" onClick={() => navigate("/Orders")}>
-          {"<-"} Danh sách các đơn hàng
-        </button>
+      <button className="back-button" onClick={() => navigate("/Orders")}>
+        {"<-"} Danh sách các đơn hàng
+      </button>
       <div className="order-detail-header">
         {order && (
           <div className="order-info-summary">
@@ -167,7 +169,7 @@ const OrderDetail = () => {
       {order && !isLoading && !error && (
         <>
           <div style={{ marginBottom: "20px", marginTop: "50px" }}>
-            <OrderSteps status={(order.status) as any} />
+            <OrderSteps status={order.status as any} />
           </div>
 
           <div className="order-detail-content">
@@ -237,6 +239,27 @@ const OrderDetail = () => {
                 <p>{formatCurrency(order.shipPrice)}</p>
               </div>
               <div className="line-order-detail-payment"></div>
+              {/* <div>
+                <div className="discount">
+                  <p>Giảm giá:</p>
+                  <p>-{formatCurrency(order.discount)}</p>
+              </div>
+              <div>
+                <div className="tax">
+                  <p>Thuế:</p>
+                  <p>{formatCurrency(order.tax)}</p>
+                </div>
+              </div> */}
+              <div className="total">
+                <p>Hình thức thanh toán:</p>
+                <p className="pay-method-value">
+                  {order.payMethod === "cod"
+                    ? "Thanh toán khi nhận hàng"
+                    : order.payMethod === "qr"
+                    ? "Chuyển khoản qua mã QR"
+                    : "N/A"}
+                </p>
+              </div>
               <div className="total">
                 <p>Tổng thanh toán</p>
                 <p>{formatCurrency(order.payPrice)}</p>

@@ -62,6 +62,7 @@ export interface OrderListItem {
   status?: string;
   shipPrice: number;
   payPrice: number;
+  payMethod?: string | null;
   phone?: string;
   address?: string;
   details: OrderProductLine[];
@@ -69,6 +70,7 @@ export interface OrderListItem {
 
 export interface OrderDetailData extends OrderListItem {
   subtotal: number;
+   payMethod?: string | null;
 }
 
 const getOrderCustomer = (order: BackendOrder) =>
@@ -138,6 +140,7 @@ const mapOrderBase = (order: BackendOrder) => {
     status: order.status ?? undefined,
     shipPrice,
     payPrice,
+    payMethod: order.payMethod ?? null,
     phone: order.phone ?? order.user?.phone ?? undefined,
     address: order.address ?? order.user?.address ?? undefined,
     details,
@@ -156,6 +159,7 @@ const mapOrder = (order: BackendOrder): OrderListItem => {
     status: base.status,
     shipPrice: base.shipPrice,
     payPrice: base.payPrice,
+    payMethod: base.payMethod,
     phone: base.phone,
     address: base.address,
     details: base.details,
@@ -173,6 +177,7 @@ const mapOrderDetail = (order: BackendOrder): OrderDetailData => {
     status: base.status,
     shipPrice: base.shipPrice,
     payPrice: base.payPrice,
+    payMethod: base.payMethod,
     phone: base.phone,
     address: base.address,
     details: base.details,

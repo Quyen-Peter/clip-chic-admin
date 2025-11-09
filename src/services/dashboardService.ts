@@ -29,6 +29,13 @@ export interface YearlySalesResponse {
   }[];
 }
 
+export interface MonthlySalesResponse {
+  orderThisMonth: number;
+  orderLastMonth: number;
+  orderFailedThisMonth: number;
+  orderFailedLastMonth: number;
+}
+
 export const fetchDailyOrder = async (token?: string): Promise<DailyOrderData> => {
   try {
     const res = await fetch(`${API_URL}/api/Order/DailyOrder`, {
@@ -131,6 +138,26 @@ export const fetchYearlySalesSummary = async (
     return await res.json();
   } catch (err) {
     console.error("❌ Lỗi khi lấy dữ liệu doanh thu năm:", err);
+    throw err;
+  }
+};
+
+export const fetchMonthlySalesOrder = async (): Promise<MonthlySalesResponse> => {
+  try {
+    const res = await fetch(`${API_URL}/api/Order/MonthlySalesOrder`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error("❌ Lỗi khi lấy dữ liệu MonthlySalesOrder:", err);
     throw err;
   }
 };
