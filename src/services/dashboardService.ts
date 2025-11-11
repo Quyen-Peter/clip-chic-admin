@@ -34,7 +34,10 @@ export interface MonthlySalesResponse {
   orderLastMonth: number;
   orderFailedThisMonth: number;
   orderFailedLastMonth: number;
+  thisMonthSales: number;
+  lastMonthSales: number;
 }
+
 
 export const fetchDailyOrder = async (token?: string): Promise<DailyOrderData> => {
   try {

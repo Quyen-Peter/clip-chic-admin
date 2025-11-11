@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import "../css/Dashboard.css";
 import {
@@ -13,7 +12,11 @@ import {
 import { fetchOrders, OrderListItem } from "../services/orderService";
 import { useNavigate } from "react-router-dom";
 import { getOrderStatus } from "../utils/orderStatus";
-import { fetchDailyOrder, DailyOrderData } from "../services/dashboardService";
+import {
+  fetchDailyOrder,
+  DailyOrderData,
+  MonthlySalesResponse,
+} from "../services/dashboardService";
 import { fetchTopBlindboxes, TopBlindbox } from "../services/dashboardService";
 import { fetchTopProducts, TopProduct } from "../services/dashboardService";
 import { fetchYearlySalesSummary } from "../services/dashboardService";
@@ -36,11 +39,13 @@ const Dashboard = () => {
   const [dailyData, setDailyData] = useState<DailyOrderData | null>(null);
   const [topBlindboxes, setTopBlindboxes] = useState<TopBlindbox[]>([]);
   const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
-  const [monthlyData, setMonthlyData] = useState({
+  const [monthlyData, setMonthlyData] = useState<MonthlySalesResponse>({
     orderThisMonth: 0,
     orderLastMonth: 0,
     orderFailedThisMonth: 0,
     orderFailedLastMonth: 0,
+    thisMonthSales: 0,
+    lastMonthSales: 0,
   });
 
   useEffect(() => {
@@ -344,13 +349,25 @@ const Dashboard = () => {
         <div className="month-card">
           <div className="month-row">
             <span>Doanh thu tháng này</span>
-            <span>0</span>
+            <span>{monthlyData.thisMonthSales.toLocaleString("vi-VN")}</span>
           </div>
           <div className="month-row">
             <span>Doanh thu tháng trước</span>
-            <span>0</span>
+            <span>{monthlyData.lastMonthSales.toLocaleString("vi-VN")}</span>
           </div>
-          <span className="change up">Tăng 10% so với tháng trước</span>
+          <span
+            className={`change ${
+              isIncrease(monthlyData.thisMonthSales, monthlyData.lastMonthSales)
+                ? "up"
+                : "down"
+            }`}
+          >
+            {isIncrease(monthlyData.thisMonthSales, monthlyData.lastMonthSales)
+              ? "Tăng"
+              : "Giảm"}{" "}
+            {calcChange(monthlyData.thisMonthSales, monthlyData.lastMonthSales)}{" "}
+            so với tháng trước
+          </span>
         </div>
 
         <div className="month-card">
