@@ -1,8 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "../screen/Dashboard";
-import Orders from "../screen/Orders";   
+import Orders from "../screen/Orders";
 import Products from "../screen/Products";
-import Customers from "../screen/Customers";
+import Design from "../screen/Design";
 import Orther from "../screen/Orther";
 import User from "../screen/User";
 import Voucher from "../screen/Voucher";
@@ -20,7 +20,8 @@ const AppRouter = () => {
             <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/Orders" element={<Orders />} />
             <Route path="/Products" element={<Products />} />
-            <Route path="/Customers" element={<Customers />} />
+            <Route path="/Design" element={<Design />} />
+            <Route path="/Customers" element={<Design />} />
             <Route path="/Voucher" element={<Voucher />} />
             <Route path="/User" element={<User />} />
             <Route path="/Orther" element={<Orther />} />

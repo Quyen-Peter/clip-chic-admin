@@ -194,6 +194,11 @@ const OrderDetail = () => {
                       <p className="product-name">
                         {product.description || "No description"}
                       </p>
+                      {product.status && (
+                        <span className={`product-status-pill status-${product.status.toLowerCase()}`}>
+                          {product.status}
+                        </span>
+                      )}
                     </div>
 
                     <p className="product-quantity">
@@ -205,6 +210,23 @@ const OrderDetail = () => {
                     <p className="product-price">
                       Tổng giá: {formatCurrency(product.total)}
                     </p>
+                    {product.productId &&
+                      product.status &&
+                      ["public", "private"].includes(
+                        product.status.toLowerCase()
+                      ) && (
+                        <button
+                          className="design-link-order"
+                          type="button"
+                          onClick={() =>
+                            navigate("/Design", {
+                              state: { selectedProductId: product.productId },
+                            })
+                          }
+                        >
+                          Xem trong Design
+                        </button>
+                      )}
                   </div>
                 </div>
               ))}

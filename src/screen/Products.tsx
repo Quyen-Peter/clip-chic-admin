@@ -45,6 +45,11 @@ const Products = () => {
   const formatPrice = (value: number) =>
     value > 0 ? `${value.toLocaleString("vi-VN")} VND` : "Updating";
 
+  const isEditableStatus = (status?: string | null) => {
+    const normalized = status?.toLowerCase();
+    return normalized === "active" || normalized === "inactive";
+  };
+
   const formatCreatedDate = (value?: string) => {
     if (!value) return "Updating";
     const date = new Date(value);
@@ -114,12 +119,26 @@ const Products = () => {
             <span className="product-action">
               <button
                 className="edit-button"
+                disabled={!isEditableStatus(product.status)}
                 onClick={() => navigate(`/ProductDetail/${product.id}`)}
+                title={
+                  isEditableStatus(product.status)
+                    ? "Chỉnh sửa sản phẩm"
+                    : "Không thể chỉnh sửa sản phẩm của người dùng"
+                }
               >
                 <img src={edit} alt="Edit" />
               </button>
 
-              <button className="delete-button">
+              <button
+                className="delete-button"
+                disabled={!isEditableStatus(product.status)}
+                title={
+                  isEditableStatus(product.status)
+                    ? "Xóa sản phẩm"
+                    : "Không thể chỉnh sửa sản phẩm của người dùng"
+                }
+              >
                 <img src={trast} alt="Delete" />
               </button>
             </span>

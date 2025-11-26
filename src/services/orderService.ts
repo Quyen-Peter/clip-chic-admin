@@ -10,6 +10,8 @@ interface BackendOrderDetail {
     title?: string | null;
     descript?: string | null;
     price?: number | null;
+    status?: string | null;
+    model?: { address?: string | null } | null;
     images?: { id: number; name?: string | null; address?: string | null }[] | null;
   } | null;
   blindBoxId?: number | null;
@@ -51,6 +53,8 @@ export interface OrderProductLine {
   price: number;
   total: number;
   images: string[];
+  status?: string;
+  modelUrl?: string;
 }
 
 export interface OrderListItem {
@@ -122,6 +126,8 @@ const mapOrderLines = (order: BackendOrder): OrderProductLine[] =>
       price: unitPrice,
       total: lineTotal,
       images,
+      status: detail.product?.status ?? undefined,
+      modelUrl: detail.product?.model?.address ?? undefined,
     };
   });
 

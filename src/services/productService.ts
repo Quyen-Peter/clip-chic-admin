@@ -12,6 +12,18 @@ interface BackendCollection {
   descript?: string | null;
 }
 
+interface BackendModel {
+  id: number;
+  name?: string | null;
+  address?: string | null;
+}
+
+interface BackendBase {
+  id: number;
+  name?: string | null;
+  model?: BackendModel | null;
+}
+
 interface BackendProduct {
   id: number;
   title?: string | null;
@@ -26,6 +38,8 @@ interface BackendProduct {
   createDate?: string | null;
   Images?: BackendImage[] | null;
   images?: BackendImage[] | null;
+  model?: BackendModel | null;
+  base?: BackendBase | null;
 }
 
 export interface ProductListItem {
@@ -39,6 +53,7 @@ export interface ProductListItem {
   collectionName?: string;
   status?: string;
   createDate?: string;
+  modelUrl?: string;
 }
 
 export interface ProductImage {
@@ -93,6 +108,7 @@ const mapProduct = (product: BackendProduct): ProductListItem => {
     collectionName: product.collection?.name?.trim(),
     status: product.status ?? undefined,
     createDate: product.createDate ?? undefined,
+    modelUrl: product.model?.address ?? undefined,
   };
 };
 
@@ -104,6 +120,11 @@ const mapProductDetail = (product: BackendProduct): ProductDetail => ({
 
 export async function fetchProducts(): Promise<ProductListItem[]> {
   const data = await apiRequest<BackendProduct[]>("Product/GetAll");
+  return data.map(mapProduct);
+}
+
+export async function fetchCustomProducts(): Promise<ProductListItem[]> {
+  const data = await apiRequest<BackendProduct[]>("Product/GetAllCustom");
   return data.map(mapProduct);
 }
 

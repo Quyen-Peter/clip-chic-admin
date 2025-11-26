@@ -153,6 +153,19 @@
   cursor: pointer;
 }
 
+.edit-button:disabled,
+.delete-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #f2f2f2;
+  border-color: #d7d7d7;
+}
+
+.edit-button:disabled img,
+.delete-button:disabled img {
+  filter: grayscale(100%);
+}
+
 .product-feedback {
   padding: 12px;
   color: #173DA2;
