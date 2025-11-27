@@ -12,8 +12,8 @@ const Sidebar = () => {
     { path: "/Products", label: "Sản phẩm" },
     { path: "/BlindBoxes", label: "Blindboxes" },
     { path: "/Design", label: "Thiết kế" },
-    { path: "/Voucher", label: "Promotion / Voucher" },
-    { path: "/User", label: "Người dùng" },
+    // { path: "/Voucher", label: "Promotion / Voucher" },
+    // { path: "/User", label: "Người dùng" },
     { path: "/Orther", label: "Khác" },
   ];
 
